@@ -1,0 +1,31 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace ReviewApi.Models.Database
+{
+    public partial class Review
+    {
+        public Review()
+        {
+            Artifact = new HashSet<Artifact>();
+            IbmArtifact = new HashSet<IbmArtifact>();
+            RoleInReview = new HashSet<RoleInReview>();
+            UserReview = new HashSet<UserReview>();
+        }
+
+        public int Id { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime CloseDate { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public int WorkproductId { get; set; }
+        public int ReviewTameplateId { get; set; }
+
+        public virtual ReviewTameplate ReviewTameplate { get; set; }
+        public virtual Workproduct Workproduct { get; set; }
+        public virtual ICollection<Artifact> Artifact { get; set; }
+        public virtual ICollection<IbmArtifact> IbmArtifact { get; set; }
+        public virtual ICollection<RoleInReview> RoleInReview { get; set; }
+        public virtual ICollection<UserReview> UserReview { get; set; }
+    }
+}

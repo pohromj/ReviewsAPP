@@ -1,0 +1,139 @@
+﻿
+@{
+    ViewData["Title"] = "Participants";
+}
+
+<h2>@ViewBag.Project.ProjectModel.Name</h2>
+Participants on project
+<table class="table" id="participants">
+    <tr><th>Firstname</th><th>Lastname</th><th>Email</th></tr>
+    @foreach (var p in ViewBag.Participants)
+    {
+        <tr>
+            <td>@p.Firstname</td>
+            <td>@p.Lastname</td>
+            <td>@p.Email</td>
+            @if (ViewBag.IsOwner == true)
+            {
+                <td>
+                    @if (@p.Email != ViewBag.Project.ProjectModel.Owner)
+                    {
+                        <button class="btn btn-primary btn-sm" onclick="AppendToAllUsers(this)">Remove</button>
+                    }
+                </td>
+            }
+
+        </tr>
+    }
+</table>
+
+<br /><br />
+@if (@ViewBag.IsOwner == true)
+{
+    @Html.Raw("All availble users");
+    <table class="table" id="allUsers">
+        <tr><th>Firstname</th><th>Lastname</th><th>Email</th></tr>
+
+        @foreach (var p in ViewBag.Users)
+        {
+            <tr><td>@p.Firstname</td><td>@p.Lastname</td><td>@p.Email</td><td><button class="btn btn-primary btn-sm" onclick="AppendToParticipantsTable(this)">Add</button></td></tr>
+        }
+    </table>
+    <button onclick="saveChanges(@ViewBag.Project.ProjectModel.Id)" class="btn btn-primary btn-sm">Save</button>
+}
+
+<script>
+    var addedUsers = [];
+    var removedUsers = [];
+    function AppendToParticipantsTable(index) {
+        console.log("AppendToParticipantsTable");
+        var table = document.getElementById("participants").getElementsByTagName('tbody')[0];
+        var row = index.parentNode.parentNode;
+        var i = index.parentNode.parentNode.rowIndex;
+        var indx = index.parentNode.cellIndex - 1;
+        var tbl = document.getElementById("allUsers");
+        var login = tbl.rows[i].cells[indx].innerText;
+        row.deleteCell(3);
+        var cell = row.insertCell(3);
+        var btn = createButton('AppendToAllUsers(this)', 'Remove');
+        btn.setAttribute('class', 'btn btn-primary btn-sm');
+        console.log(btn);
+        cell.appendChild(btn);
+        table.appendChild(row);
+        //var allUserTable = document.getElementById("allUsers").getElementsByTagName('tbody');
+        // - 1;
+        //console.log(allUserTable);
+        console.log("cell: " + indx);
+        console.log("row: " + i);
+
+        deleteFromUserArray(removedUsers, login)
+        addedUsers.push(login);
+
+        console.log("removed :" + removedUsers);
+        console.log("added :" + addedUsers);
+    }
+    function AppendToAllUsers(index) {
+        console.log("AppendToAllUsers");
+        var table = document.getElementById("allUsers").getElementsByTagName('tbody')[0];
+        var row = index.parentNode.parentNode;
+        var i = index.parentNode.parentNode.rowIndex;
+        var indx = index.parentNode.cellIndex - 1;
+        var tbl = document.getElementById("participants");
+        var login = tbl.rows[i].cells[indx].innerText;
+        row.deleteCell(3);
+        var cell = row.insertCell(3);
+        var btn = createButton('AppendToParticipantsTable(this)', 'Add');
+        btn.setAttribute('class', 'btn btn-primary btn-sm');
+        cell.appendChild(btn);
+        table.appendChild(row);
+        var indx = index.parentNode.cellIndex;// - 1;
+        console.log("cell: " + indx);
+        console.log("row: " + i);
+        deleteFromUserArray(addedUsers, login);
+        removedUsers.push(login);
+        console.log("removed :" + removedUsers);
+        console.log("added :" +addedUsers);
+    }
+
+    function deleteFromUserArray(arr, login) {
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i] === login) {
+                arr.splice(i, 1);
+                break;
+            }
+        }
+
+    }
+    function createButton(fnc, txt) {
+        var btn = document.createElement('button');
+        var text = document.createTextNode(txt);
+        btn.appendChild(text);
+        btn.setAttribute('onclick', fnc);
+        return btn;
+
+    }
+    function saveChanges(id) {
+        var data = JSON.stringify({ AddedUsers: addedUsers, RemovedUsers: removedUsers, ProjectId : id });
+        console.log(data);
+        $.ajax({
+            type: 'POST',
+            url: "http://localhost:49727/User/ChangeParticipants", // http://localhost:60000/api/upload/ -- na tuto URL se budou posilat diagramy (XML)
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            data: data,
+            success: function (result) {
+                if (result !== null) {
+                    // document.getElementById("result").innerHTML = JSON.stringify(result);
+                    alert(result.result);
+                } else {
+                    //document.getElementById("result").innerHTML = "NULL";
+                    alert("KO");
+
+                }
+            }
+        });
+
+    }
+
+
+</script>

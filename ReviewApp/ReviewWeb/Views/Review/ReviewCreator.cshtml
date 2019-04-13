@@ -1,0 +1,420 @@
+﻿@model ReviewWeb.Models.ReviewModels.ReviewViewModel
+
+@{
+    ViewData["Title"] = "ReviewCreator";
+}
+
+<h2>ReviewCreator</h2>
+
+<h4>ReviewViewModel</h4>
+<hr />
+<div id="accordion">
+    <div class="card">
+        <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Review setup
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <form>
+                            <!--asp-action="CreateReview" method="post" asp-controller="Review"-->
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <label asp-for="Name" class="control-label"></label>
+                                <input asp-for="Name" class="form-control" id="ReviewName" required />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Description" class="control-label"></label>
+                                <textarea asp-for="Description" class="form-control" id="ReviewDescription" required></textarea>
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="StartDate" class="control-label"></label>
+                                <input asp-for="StartDate" class="form-control" type="date" required id="ReviewStartDate" />
+                                <span asp-validation-for="StartDate" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="CloseDate" class="control-label"></label>
+                                <input asp-for="CloseDate" class="form-control" type="date" required id="ReviewEndDate" />
+                                <span asp-validation-for="CloseDate" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="WorkProduct" class="control-label"></label>
+                                <select asp-for="WorkProduct" asp-items="@ViewBag.WorkProducts" class="form-control" id="workProduct"></select>
+                                <!--<input asp-for="WorkProduct" class="form-control" />-->
+                                <span asp-validation-for="WorkProduct" class="text-danger"></span>
+                                <input asp-for="ProjectId" hidden value="@ViewBag.projectId" id="projectId" />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Tameplate" class="control-label"></label>
+                                <select asp-for="Tameplate" asp-items="@ViewBag.AllTameplates" class="form-control" onchange="createForm();" id="tameplateSelect"></select>
+                                <span asp-validation-for="Tameplate" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="Create" class="btn btn-default" />
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col">
+                        <table id="Review" border="1">
+                            <tr id="ReviewHeaderRow"></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="headingTwo">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                    Review setup
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        Participants on project
+                        <table class="table" id="participants">
+                            <tr><th>Firstname</th><th>Lastname</th><th>Email</th><th>Role</th></tr>
+                            @foreach (var p in ViewBag.Participants)
+                            {
+                                <tr>
+                                    <td>@p.Firstname</td>
+                                    <td>@p.Lastname</td>
+                                    <td>@p.Email</td>
+                                    <td><select></select></td>
+                                    @if (ViewBag.IsOwner == true)
+                                    {
+                                        <td>
+                                            @if (@p.Email != ViewBag.Project.ProjectModel.Owner)
+                                            {
+                                                <button class="btn btn-primary btn-sm" onclick="AppendToAllUsers(this)">Remove</button>
+                                            }
+                                        </td>
+                                    }
+
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                    <div class="col">
+                        @if (@ViewBag.IsOwner == true)
+                        {
+                            @Html.Raw("All availble users");
+                            <table class="table" id="allUsers">
+                                <tr><th>Firstname</th><th>Lastname</th><th>Email</th></tr>
+
+                                @foreach (var p in ViewBag.Users)
+                                {
+                                    <tr><td>@p.Firstname</td><td>@p.Lastname</td><td>@p.Email</td><td><button class="btn btn-primary btn-sm" onclick="AppendToParticipantsTable(this)">Add</button></td></tr>
+                                }
+                            </table>
+                            <!--<button onclick="saveChanges(@ViewBag.Project.ProjectModel.Id)" class="btn btn-primary btn-sm">Save</button>-->
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="headingThree">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseTwo" onclick="">
+                    Data setup
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        Pick data for column
+                        <table id="dataColumns"></table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="headingFour">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseFour" aria-expanded="true" aria-controls="collapseFour" onclick="">
+                    Data setup
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion">
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        Pick data for column
+                        <table id="ArtifactTable" class="table table-bordered">
+                            <tr><th>ID</th><th>Artifact</th></tr>
+                            <tbody></tbody>
+
+                        </table>
+                    </div>
+                    <div class="col">
+                        <table id="artifactsForReview">
+                            <tr><th>ID</th><th>Artifact</th></tr>
+                            <tbody></tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <button onclick="saveReview();">Create review</button>
+        </div>
+    </div>
+</div>
+<div id="ReviewContent">
+    <table id="Reviews"></table>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/formParse.js"></script>
+    <script src="~/js/ReviewUsers.js"></script>
+<script>
+        function getReviewSetup() {
+            var reviewSetup = new Object();
+            reviewSetup.name = document.getElementById('ReviewName').value;
+            reviewSetup.description = document.getElementById('ReviewDescription').value;
+            reviewSetup.startDate = document.getElementById('ReviewStartDate').value;
+            reviewSetup.endDate = document.getElementById('ReviewEndDate').value;
+            var wrkprdct = document.getElementById('workProduct');
+            console.log(wrkprdct);
+            if (wrkprdct.length > 0)
+                reviewSetup.workProduct = wrkprdct.options[wrkprdct.selectedIndex].value;
+            var tmplt = document.getElementById('tameplateSelect');
+            if (tmplt.length > 0)
+                reviewSetup.tameplate = tmplt.options[tmplt.selectedIndex].value;
+            reviewSetup.project = document.getElementById('projectId').value;
+            return reviewSetup;
+        }
+        function getParticipants() {
+            var table = document.getElementById('participants');
+            var participants = [];
+            for (var i = 1; i < table.rows.length; i++) {
+                var participant = new Object();
+                participant.email = table.rows[i].cells[2].innerText;
+                participant.role = getValueFromSelect(table.rows[i].cells[3]);
+                participants.push(participant);
+            }
+            return participants;
+        }
+        function getValueFromSelect(cell) {
+            console.log(cell);
+            var select = cell.firstChild;
+            console.log(select);
+            var role = select.options[select.selectedIndex].value;
+            return role;
+        }
+        function getDataForColumn() {
+            var table = document.getElementById('dataColumns');
+            var dataForColumns = [];
+            for (var i = 0; i < table.rows.length; i++) {
+                var dataForColumn = new Object();
+                var artifactDetailParameter = getValueFromSelect(table.rows[i].cells[1]);
+                if (artifactDetailParameter !== '') {
+                    dataForColumn.formColumn = table.rows[i].cells[0].innerText;
+                    dataForColumn.artifactParameter = artifactDetailParameter;
+                    dataForColumns.push(dataForColumn);
+                }
+            }
+            return dataForColumns;
+        }
+        function getArtifactsForReview() {
+            var table = document.getElementById('artifactsForReview');
+            var artifacts = [];
+            for (var i = 1; i < table.rows.length; i++) {
+                var artifact = table.rows[i].cells[0].innerText;
+                artifacts.push(artifact);
+            }
+            return artifacts;
+
+        }
+        function saveReview() {
+            var reviewSetup = getReviewSetup();
+            console.log('review setup');
+            var participants = getParticipants();
+            console.log('participants')
+            var dataForColumns = getDataForColumn();
+            console.log('data');
+            var artifacts = getArtifactsForReview();
+            console.log('artifacts');
+          
+            var a = getSpecificArtifacts(artifacts);
+            console.log(a);
+
+            createReviewWithData(a, dataForColumns);
+            var html = getReviewHtml();
+            console.log(html);
+            var json = JSON.stringify({ setup: reviewSetup, participant: participants, columnsData: dataForColumns, artifact: artifacts, from: html });
+            console.log(json);
+        }
+        function getSpecificArtifacts(idx) {
+            var artifacts = [];
+            console.log('getSpecificArtifacts');
+            console.log(idx);
+            console.log(art);
+            for (var i = 0; i < art.length; i++) {
+                for (var j = 0; j < idx.length; j++) {
+                    if (art[i].id === parseInt(idx[j]))
+                        artifacts.push(art[i]);
+                }
+            }
+            return artifacts;
+        }
+        function createReviewWithData(artifacts, dataForColumns) {
+            console.log('createReviewWithData:     ' + dataForColumns);
+            var table = document.getElementById('Reviews');
+            var headerRow = createReviewFormHeaderss();
+            table.appendChild(headerRow);
+            console.log(table);
+            var firstRow = createReviewFormRow();
+            table.appendChild(firstRow);
+            fillFormWithData(firstRow, artifacts, dataForColumns);
+        }
+        function createReviewFormHeaderss() {
+            var row = document.createElement('tr');
+            var th = document.createElement('th');
+            row.appendChild(th);
+            for (var i = 0; i < Formdata.columns.length; i++) {
+                var th = createThElementWithText(Formdata.columns[i].columnName);
+                row.appendChild(th);
+            }
+            return row;
+
+        }
+        function createThElementWithText(text) {
+            var th = document.createElement('th');
+            var innerText = document.createTextNode(text);
+            th.appendChild(innerText);
+            return th;
+        }
+
+        function createReviewFormRow() {
+            var row = document.createElement('tr');
+            var btn = createButtonElementToReviewRow();
+            row.appendChild(btn);
+            for (var i = 0; i < Formdata.columns.length; i++) {
+                var td = document.createElement('td');
+                var content = createReviewFormInnerElement(Formdata.columns[i].type, Formdata.columns[i].option);
+                td.appendChild(content);
+                row.appendChild(td);
+            }
+            return row;
+        }
+        function createButtonElementToReviewRow() {
+            var td = document.createElement('td');
+            var btn = document.createElement('button');
+            var text = document.createTextNode('Clone');
+            btn.setAttribute('onclick', 'copyRow(this)');
+            btn.appendChild(text);
+            td.appendChild(btn);
+            return td;
+
+        }
+        function createReviewFormInnerElement(element, opt) {
+            if (element === 'textarea') {
+                var textarea = document.createElement('textarea');
+                return textarea;
+            }
+            else {
+                var select = document.createElement('select');
+                console.log(opt);
+                for (var i = 0; i < opt.length; i++) {
+                    var o = createOptionsForReviewElement(opt[i]);
+                    select.appendChild(o);
+
+                }
+                return select;
+            }
+
+        }
+        function createOptionsForReviewElement(opt) {
+            var option = document.createElement('option');
+            option.value = opt;
+            option.text = opt;
+            return option;
+        }
+        function fillFormWithData(row, artifacts, dataForColumns) {
+            var table = document.getElementById('Reviews');
+            console.log('fillFormWithData:     ');
+            console.log(dataForColumns)
+            var indexes = findIndexesOfColumns(dataForColumns);
+
+            for (var i = 0; i < artifacts.length; i++) {
+                var tmp;
+                if (i === 0)
+                    tmp = fillRowWithData(row, indexes, artifacts[i]);
+                else {
+                    table.appendChild(tmp);
+                    tmp = fillRowWithData(tmp, indexes, artifacts[i]);
+                }
+            }
+        }
+        function fillRowWithData(row, indexes, artifact) {
+            var clone = row.cloneNode(true);
+            for (var i = 0; i < indexes.length; i++) {
+
+                var area = row.cells[indexes[i].columnIndex].firstChild;// = artifact[indexes.dataType];
+                /*console.log(area);
+                console.log(artifact);
+                console.log(artifact.artifactProperties[indexes[i].dataType]);*/
+                console.log(indexes);
+                console.log(artifact[indexes[i].dataType]);
+                var txt = document.createTextNode(artifact[indexes[i].dataType]);
+                area.appendChild(txt);
+            }
+            return clone;
+
+        }
+        function findIndexesOfColumns(dataForColumn) {
+            var table = document.getElementById('Reviews');
+            console.log('findIndexesOfColumns:     ' + dataForColumn);
+            var indexes = [];
+            for (var i = 0; i < table.rows[0].cells.length; i++) {
+                for (var j = 0; j < dataForColumn.length; j++) {
+                    if (dataForColumn[j].formColumn === table.rows[0].cells[i].innerText) {
+                        var obj = new Object();
+                        obj.columnIndex = i;
+                        obj.dataType = dataForColumn[j].artifactParameter;
+                        indexes.push(obj);
+                    }
+                }
+            }
+            console.log(indexes);
+            return indexes;
+        }
+        function getReviewHtml() {
+            var review = document.getElementById('ReviewContent');
+            var content = review.innerHTML;
+            return content;
+        }
+
+</script>
+
+}

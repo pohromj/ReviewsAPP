@@ -1,0 +1,38 @@
+﻿<table class="table table-bordered">
+    <tr><th>Reference ID</th><th>ArtifactName</th></tr>
+    @foreach (var a in ViewBag.Artifacts)
+    {
+        <tr><td>@a.IbmId</td><td><a target="_blank" href="@a.Url">@a.Name</a></td></tr>
+    }
+</table>
+
+<ul class="pagination">
+    @for (var i = 0; i < ViewBag.NumberOfPage; i++)
+    {
+        var projectID = 0;
+        if (@ViewBag.workProductDetail != null)
+        {
+            projectID = @ViewBag.workProductDetail.Id;
+        }
+        else
+        {
+            projectID = @ViewBag.WorkProductId;
+
+        }
+        var name = i + 1;
+        if (ViewBag.ActivePage == i)
+        {
+            <li class="page-item active">
+                <a class="page-link" href="@Url.Action("ShowWorkProductArtifacts", "Artifact", new { workproductId = projectID, page = i })">@name</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("ShowWorkProductArtifacts", "Artifact", new { workproductId = projectID, page = i })">@name</a>
+            </li>
+
+        }
+
+    }
+</ul>

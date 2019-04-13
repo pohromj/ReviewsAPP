@@ -1,0 +1,154 @@
+﻿
+@{
+    ViewData["Title"] = "TameplateCreator";
+}
+
+<script type="text/javascript" src="~/js/TameplateCreator.js"></script>
+<script type="text/javascript" src="~/js/headerConfig.js"></script>
+<h2>TameplateCreator</h2>
+<div id="accordion">
+    <div class="card">
+        <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Tameplate name
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+
+            <div class="card-body">
+                <table>
+                    <tr><td>Tameplate name:</td><td><input type="text" id="tameplateName" class="form-control"></td></tr>
+                    <tr><td>Tameplate description:</td><td><textarea id="tameplateDescription" class="form-control" style="resize:both;"></textarea></td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="headingOneAndHalf">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOneAndHalf" aria-expanded="true" aria-controls="collapseOneandHalf">
+                    Review roles
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapseOneAndHalf" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+
+            <div class="card-body">
+                <form id="roleForm">
+                    <table id="roleTable"></table>
+                </form>
+                <button type="button" onclick="addRowToRoleTable();" class="btn btn-primary btn-sm">Add role</button>
+
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="headingTwo">
+            <h5 class="mb-0">
+                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Review Header
+                </button>
+            </h5>
+        </div>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <table class="table table-sm">
+                            <tbody>
+                                <tr><td>Project name: </td><td>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</td></tr>
+                                <tr><td>Work Product name: </td><td>a</td></tr>
+                                <tr><td>Work Product version: </td><td>a</td></tr>
+                                <tr><td>Review type: </td><td>a</td></tr>
+                                <tr><td>Reviewers: </td><td>a</td></tr>
+                                <tr><td>Date: </td><td>a</td></tr>
+                            </tbody>
+                            <tbody id="CustomValue"></tbody>
+                        </table>
+                        <button class="btn btn-primary btn-sm" onclick="showSpecificationOfRow();">Add atribute</button>
+
+                    </div>
+                    <div class="col">
+                        <table id="headerSpecification" style="visibility: hidden;">
+                            <tr><td>Atribut name: </td><td><input type="text" id="CustomValueName"></td></tr>
+                            <tr>
+                                <td>Function: </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="exampleRadios" id="noneRadio" value="none" checked onchange="removeColumns();">
+                                        <label class="form-check-label" for="exampleRadios1">
+                                            None
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="sum" onchange="showColumns();">
+                                        <label class="form-check-label" for="exampleRadios2">
+                                            Sum
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tbody id="Columns"></tbody>
+                            <tbody>
+                                <tr>
+                                    <td><button type="button" onclick="appendToHeaderTable();" class="btn btn-primary btn-sm" id="saveButton">Add</button></td>
+                                    <td><button type="button" onclick="hideSpecificationOfRow();" class="btn btn-secondary btn-sm">Close</button></td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="headingThree">
+            <h5 class="mb-0">
+                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    Review body
+                </button>
+            </h5>
+        </div>
+        <div id="collapseThree" class="collapse" aria-labelledby="headingThree">
+            <div class="card-body">
+
+                Column type:
+                <select id="columnType" onchange="showSetupWindow();" class="selectpicker">
+                    <option value="text">Text</option>
+                    <option value="opt">Option</option>
+                </select>
+                <div>
+                    <table>
+                        <tr><td>Column name: </td><td><input type="text" id="columnName" class="form-control"></td></tr>
+                    </table>
+                    <div id="setupWindow" style="visibility: hidden;">
+                        <form id="optionForm">
+                            <table id="optionSetup"></table>
+                        </form>
+                        <input type="button" onclick="createInputText();" value="Add Enum" class="btn btn-primary btn-sm">
+                    </div>
+                </div>
+
+                <input type="button" value="add column" onclick="addColumn();" class="btn btn-primary btn-sm">
+                <input type="button" value="clear" onclick="removeElement();" class="btn btn-secondary btn-sm">
+
+                <br>
+                <div style="overflow: scroll; overflow-x:auto; overflow-y:hidden;">
+                    <table border="1" id="workSpaceTable">
+                        <tr id="firstTableRow"></tr>
+                    </table>
+                </div>
+                <br>
+                <br>
+                <input type="button" value="Save" onclick="postReviewTameplate();" class="btn btn-primary btn-sm">
+            </div>
+        </div>
+    </div>
+</div>

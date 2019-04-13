@@ -1,0 +1,15 @@
+﻿
+@{
+    ViewData["Title"] = "WorkProductDetail";
+}
+
+<h2>WorkProductDetail</h2>
+
+<table>
+    <tr><td>Name: </td> <td>@ViewBag.workProductDetail.Name</td></tr>
+    <tr><td>Description: </td><td>@ViewBag.workProductDetail.Description</td></tr>
+</table>
+<h2>Work product artifacts</h2>
+<div id="pagination">
+    @await Html.PartialAsync("~/Views/Shared/ArtifactsPagination.cshtml")
+</div>

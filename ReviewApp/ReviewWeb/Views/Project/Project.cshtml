@@ -1,0 +1,17 @@
+﻿
+@{
+    ViewData["Title"] = "Project";
+}
+
+<h2>Projects</h2>
+
+<table class="table">
+    <tr><td>Project ID</td><td>Name</td><td>Description</td></tr>
+    @foreach (var p in ViewBag.Projects)
+    {
+        <tr><td>@p.Id</td><td><a href="@Url.Action("ProjectDetail","Project", new { projectId=@p.Id})">@p.Name</a></td><td>@p.Description</td></tr>
+    }
+</table>
+<a asp-action="CreateProject" asp-controller="Project" asp->Create project</a>
+
+
