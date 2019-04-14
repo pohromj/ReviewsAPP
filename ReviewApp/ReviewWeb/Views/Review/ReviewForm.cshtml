@@ -1,0 +1,24 @@
+﻿
+@{
+    ViewData["Title"] = "ReviewForm";
+}
+
+<h2>ReviewForm</h2>
+<table>
+    <tr><td>Project name: </td><td>@ViewBag.ReviewSetup.Setup.ProjectName</td></tr>
+    <tr><td>Work product name: </td><td>@ViewBag.ReviewSetup.Setup.WorkProductName</td></tr>
+    <tr>
+        <td>Reviewers: </td>
+        <td>
+            @foreach(var p in ViewBag.ReviewSetup.Participant)
+            {
+                Html.Raw(p.Firstname + " " + p.Lastname + " (" + p.Role + "),");
+            }
+        </td>
+    </tr>
+</table>
+
+<div id="ReviewForm">
+    @Html.Raw(@ViewBag.ReviewSetup.Setup.Html)
+</div>
+

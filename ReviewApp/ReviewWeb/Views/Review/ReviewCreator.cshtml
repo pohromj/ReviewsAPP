@@ -270,9 +270,11 @@
 
             createReviewWithData(a, dataForColumns);
             var html = getReviewHtml();
+            reviewSetup.html = html;
             console.log(html);
-            var json = JSON.stringify({ setup: reviewSetup, participant: participants, columnsData: dataForColumns, artifact: artifacts, from: html });
-            console.log(json);
+            var json = JSON.stringify({ setup: reviewSetup, participant: participants, columnsData: dataForColumns, artifact: artifacts });
+            //console.log(json);
+            saveToDatabase(json);
         }
         function getSpecificArtifacts(idx) {
             var artifacts = [];
@@ -413,6 +415,30 @@
             var review = document.getElementById('ReviewContent');
             var content = review.innerHTML;
             return content;
+        }
+
+        function saveToDatabase(data) {
+
+            //var dta = JSON.stringify(data);
+            //console.log(dta);
+            $.ajax({
+                type: 'POST',
+                url: "http://localhost:49727/Review/CreateReview", // http://localhost:60000/api/upload/ -- na tuto URL se budou posilat diagramy (XML)
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                data: data,
+                success: function (result) {
+                    if (result !== null) {
+                        // document.getElementById("result").innerHTML = JSON.stringify(result);
+                        alert(result.result);
+                    } else {
+                        //document.getElementById("result").innerHTML = "NULL";
+                        alert("KO");
+
+                    }
+                }
+            });
+
         }
 
 </script>

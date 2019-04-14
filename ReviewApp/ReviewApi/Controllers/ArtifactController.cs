@@ -43,10 +43,12 @@ namespace ReviewApi.Controllers
         }
         private void SaveArtifactToDatabase(List<JazzArtifact> artifacts, IbmUrlModel model)
         {
+            ;
             foreach(var a in artifacts)
             {
                 IbmArtifact artifact = new IbmArtifact() { IbmId = a.IbmId, Name = a.Name, Url = a.Url, WorkproductId = model.WorkProductId };
-                context.IbmArtifact.Add(artifact);
+                context.Workproduct.Where(w => w.Id == model.WorkProductId).FirstOrDefault().IbmArtifact.Add(artifact);
+                //context.IbmArtifact.Add(artifact);
             }
             context.SaveChanges();
         }

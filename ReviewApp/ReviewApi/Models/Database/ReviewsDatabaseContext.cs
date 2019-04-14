@@ -17,8 +17,10 @@ namespace ReviewApi.Models.Database
 
         public virtual DbSet<Artifact> Artifact { get; set; }
         public virtual DbSet<ArtifactDetail> ArtifactDetail { get; set; }
+        public virtual DbSet<ArtifactReview> ArtifactReview { get; set; }
         public virtual DbSet<HeaderRow> HeaderRow { get; set; }
         public virtual DbSet<IbmArtifact> IbmArtifact { get; set; }
+        public virtual DbSet<IbmArtifactReview> IbmArtifactReview { get; set; }
         public virtual DbSet<Project> Project { get; set; }
         public virtual DbSet<ProjectType> ProjectType { get; set; }
         public virtual DbSet<Review> Review { get; set; }
@@ -39,7 +41,7 @@ namespace ReviewApi.Models.Database
             if (!optionsBuilder.IsConfigured)
             {
 /*#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=ReviewsDatabase;Trusted_Connection=True;");*/
+                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=DatabaseReviews;Trusted_Connection=True;");*/
             }
         }
 
@@ -49,7 +51,7 @@ namespace ReviewApi.Models.Database
 
             modelBuilder.Entity<Artifact>(entity =>
             {
-                entity.HasKey(e => new { e.Id, e.WorkproductId, e.WorkproductProjectId })
+                entity.HasKey(e => new { e.Id, e.WorkproductId })
                     .HasName("Artifact_PK");
 
                 entity.Property(e => e.Id)
@@ -58,14 +60,16 @@ namespace ReviewApi.Models.Database
 
                 entity.Property(e => e.WorkproductId).HasColumnName("Workproduct_id");
 
-                entity.Property(e => e.WorkproductProjectId).HasColumnName("Workproduct_Project_id");
-
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(256)
                     .IsUnicode(false);
 
                 entity.Property(e => e.ReviewId).HasColumnName("Review_id");
+
+                entity.Property(e => e.WorkproductProjectId).HasColumnName("Workproduct_Project_id");
+
+                entity.Property(e => e.WorkproductProjectId1).HasColumnName("Workproduct_Project_id1");
 
                 entity.HasOne(d => d.Review)
                     .WithMany(p => p.Artifact)
@@ -74,14 +78,14 @@ namespace ReviewApi.Models.Database
 
                 entity.HasOne(d => d.Workproduct)
                     .WithMany(p => p.Artifact)
-                    .HasForeignKey(d => d.WorkproductId)
+                    .HasForeignKey(d => new { d.WorkproductId, d.WorkproductProjectId1 })
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Artifact_Workproduct_FK");
             });
 
             modelBuilder.Entity<ArtifactDetail>(entity =>
             {
-                entity.HasKey(e => new { e.Id, e.ArtifactId, e.ArtifactWorkproductId, e.ArtifactWorkproductProjectId })
+                entity.HasKey(e => new { e.Id, e.ArtifactId, e.ArtifactWorkproductId })
                     .HasName("Artifact_detail_PK");
 
                 entity.ToTable("Artifact_detail");
@@ -108,9 +112,35 @@ namespace ReviewApi.Models.Database
 
                 entity.HasOne(d => d.Artifact)
                     .WithMany(p => p.ArtifactDetail)
-                    .HasForeignKey(d => new { d.ArtifactId, d.ArtifactWorkproductId, d.ArtifactWorkproductProjectId })
+                    .HasForeignKey(d => new { d.ArtifactId, d.ArtifactWorkproductId })
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Artifact_detail_Artifact_FK");
+            });
+
+            modelBuilder.Entity<ArtifactReview>(entity =>
+            {
+                entity.HasKey(e => new { e.ArtifactId, e.ArtifactWorkproductId, e.ReviewId })
+                    .HasName("Relation_24_PK");
+
+                entity.ToTable("Artifact_review");
+
+                entity.Property(e => e.ArtifactId).HasColumnName("Artifact_id");
+
+                entity.Property(e => e.ArtifactWorkproductId).HasColumnName("Artifact_Workproduct_id");
+
+                entity.Property(e => e.ReviewId).HasColumnName("Review_id");
+
+                entity.HasOne(d => d.Review)
+                    .WithMany(p => p.ArtifactReview)
+                    .HasForeignKey(d => d.ReviewId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ASS_29");
+
+                entity.HasOne(d => d.Artifact)
+                    .WithMany(p => p.ArtifactReview)
+                    .HasForeignKey(d => new { d.ArtifactId, d.ArtifactWorkproductId })
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ASS_28");
             });
 
             modelBuilder.Entity<HeaderRow>(entity =>
@@ -170,6 +200,8 @@ namespace ReviewApi.Models.Database
 
                 entity.Property(e => e.WorkproductId).HasColumnName("Workproduct_id");
 
+                entity.Property(e => e.WorkproductProjectId).HasColumnName("Workproduct_Project_id");
+
                 entity.HasOne(d => d.Review)
                     .WithMany(p => p.IbmArtifact)
                     .HasForeignKey(d => d.ReviewId)
@@ -177,9 +209,35 @@ namespace ReviewApi.Models.Database
 
                 entity.HasOne(d => d.Workproduct)
                     .WithMany(p => p.IbmArtifact)
-                    .HasForeignKey(d => d.WorkproductId)
+                    .HasForeignKey(d => new { d.WorkproductId, d.WorkproductProjectId })
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Ibm_artifact_Workproduct_FK");
+            });
+
+            modelBuilder.Entity<IbmArtifactReview>(entity =>
+            {
+                entity.HasKey(e => new { e.IbmArtifactId, e.IbmArtifactIbmId, e.ReviewId })
+                    .HasName("Relation_23_PK");
+
+                entity.ToTable("Ibm_artifact_review");
+
+                entity.Property(e => e.IbmArtifactId).HasColumnName("Ibm_artifact_id");
+
+                entity.Property(e => e.IbmArtifactIbmId).HasColumnName("Ibm_artifact_ibm_id");
+
+                entity.Property(e => e.ReviewId).HasColumnName("Review_id");
+
+                entity.HasOne(d => d.Review)
+                    .WithMany(p => p.IbmArtifactReview)
+                    .HasForeignKey(d => d.ReviewId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ASS_27");
+
+                entity.HasOne(d => d.IbmArtifactI)
+                    .WithMany(p => p.IbmArtifactReview)
+                    .HasForeignKey(d => new { d.IbmArtifactId, d.IbmArtifactIbmId })
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ASS_26");
             });
 
             modelBuilder.Entity<Project>(entity =>
@@ -236,6 +294,8 @@ namespace ReviewApi.Models.Database
 
                 entity.Property(e => e.Description).HasColumnType("text");
 
+                entity.Property(e => e.Html).HasColumnType("text");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(256)
@@ -249,6 +309,8 @@ namespace ReviewApi.Models.Database
 
                 entity.Property(e => e.WorkproductId).HasColumnName("Workproduct_id");
 
+                entity.Property(e => e.WorkproductProjectId).HasColumnName("Workproduct_Project_id");
+
                 entity.HasOne(d => d.ReviewTameplate)
                     .WithMany(p => p.Review)
                     .HasForeignKey(d => d.ReviewTameplateId)
@@ -257,7 +319,7 @@ namespace ReviewApi.Models.Database
 
                 entity.HasOne(d => d.Workproduct)
                     .WithMany(p => p.Review)
-                    .HasForeignKey(d => d.WorkproductId)
+                    .HasForeignKey(d => new { d.WorkproductId, d.WorkproductProjectId })
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Review_Workproduct_FK");
             });
@@ -398,7 +460,7 @@ namespace ReviewApi.Models.Database
                 entity.HasKey(e => new { e.UsersEmail, e.ProjectId })
                     .HasName("Relation_3_PK");
 
-                entity.ToTable("User_project");
+                entity.ToTable("User_Project");
 
                 entity.Property(e => e.UsersEmail)
                     .HasColumnName("Users_email")
@@ -518,7 +580,14 @@ namespace ReviewApi.Models.Database
 
             modelBuilder.Entity<Workproduct>(entity =>
             {
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.HasKey(e => new { e.Id, e.ProjectId })
+                    .HasName("Workproduct_PK");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.ProjectId).HasColumnName("Project_id");
 
                 entity.Property(e => e.ArtifactsUrl)
                     .HasColumnName("Artifacts_url")
@@ -531,8 +600,6 @@ namespace ReviewApi.Models.Database
                     .IsRequired()
                     .HasMaxLength(128)
                     .IsUnicode(false);
-
-                entity.Property(e => e.ProjectId).HasColumnName("Project_id");
 
                 entity.Property(e => e.UsersEmail)
                     .IsRequired()

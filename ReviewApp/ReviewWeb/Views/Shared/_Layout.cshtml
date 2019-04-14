@@ -31,6 +31,8 @@
                     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                         <li class="nav-item"><a asp-area="" asp-controller="Tameplate" asp-action="TameplateCreator" class="nav-link">Tameplate</a></li>
                         <li class="nav-item"><a asp-area="" asp-controller="Project" asp-action="ShowProjects" class="nav-link">Projects</a></li>
+                        <li class="nav-item"><a asp-area="" asp-controller="Review" asp-action="GetMyReviews" class="nav-link">My reviews</a></li>
+
                     </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li class="nav-item"><a asp-area="" asp-controller="Home" asp-action="Contact" class="nav-link">@HttpContextAccessor.HttpContext.Request.Cookies["Firstname"] @HttpContextAccessor.HttpContext.Request.Cookies["Lastname"]</a></li>

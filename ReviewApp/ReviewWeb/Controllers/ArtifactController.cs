@@ -14,7 +14,8 @@ namespace ReviewWeb.Controllers
     [Route("Artifact")]
     public class ArtifactController : Controller
     {
-        public IActionResult SpecificArtifacts(int projectId, int? workProductId)
+        [HttpGet("SpecificArtifacts")]
+        public IActionResult SpecificArtifacts(int projectId, int workProductId)
         {
             ViewBag.projectId = projectId;
             ViewBag.workProductId = 1;//workProductId;

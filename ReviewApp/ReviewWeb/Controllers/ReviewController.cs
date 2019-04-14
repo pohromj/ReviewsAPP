@@ -73,7 +73,33 @@ namespace ReviewWeb.Controllers
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
                 string json = JsonConvert.SerializeObject(setup);
                 HttpResponseMessage message = await client.PostAsync("http://localhost:55188/api/Review/CreateReview", new StringContent(json, Encoding.UTF8, "application/json"));
-                return Ok();
+                int reviewId = JsonConvert.DeserializeObject<int>(await message.Content.ReadAsStringAsync());
+                return RedirectToAction("GetReview", "Review", new { id = reviewId });
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult>GetReview(int id)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
+                HttpResponseMessage msg2 = await client.GetAsync("http://localhost:55188/api/Review/GetReview?id=" + id);
+                FullReview review = JsonConvert.DeserializeObject<FullReview>(await msg2.Content.ReadAsStringAsync());
+                ViewBag.ReviewSetup = review;
+                return View("~/Views/Review/ReviewForm.cshtml");
+            }
+        }
+        [HttpGet]
+        [Route("GetMyReviews")]
+        public async Task<IActionResult>GetMyReviews()
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
+                HttpResponseMessage msg2 = await client.GetAsync("http://localhost:55188/api/Review/GetMyReviews");
+                List<ReviewSetup> review = JsonConvert.DeserializeObject<List<ReviewSetup>>(await msg2.Content.ReadAsStringAsync());
+                ViewBag.ReviewSetup = review;
+                return View("~/Views/Review/MyReviews.cshtml");
             }
         }
     }

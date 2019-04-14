@@ -1,0 +1,14 @@
+﻿
+@{
+    ViewData["Title"] = "MyReviews";
+}
+
+<h2>MyReviews</h2>
+<table class="table table-bordered">
+    @foreach(var r in ViewBag.ReviewSetup)
+    {
+        <tr><td><a href="@Url.Action("GetReview","Review", new { id = @r.Id})">@r.Name</a></td></tr>
+    }
+</table>
+
+

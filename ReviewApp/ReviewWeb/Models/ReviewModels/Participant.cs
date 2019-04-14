@@ -8,6 +8,6 @@ namespace ReviewWeb.Models.ReviewModels
     public class Participant
     {
         public string Email { get; set; }
-        public string Role { get; set; }
+        public int Role { get; set; }
     }
 }
