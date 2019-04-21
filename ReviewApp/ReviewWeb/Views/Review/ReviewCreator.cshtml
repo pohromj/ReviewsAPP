@@ -323,7 +323,7 @@
             row.appendChild(btn);
             for (var i = 0; i < Formdata.columns.length; i++) {
                 var td = document.createElement('td');
-                var content = createReviewFormInnerElement(Formdata.columns[i].type, Formdata.columns[i].option);
+                var content = createReviewFormInnerElement(Formdata.columns[i].type, Formdata.columns[i].option, Formdata.columns[i].columnName);
                 td.appendChild(content);
                 row.appendChild(td);
             }
@@ -339,13 +339,18 @@
             return td;
 
         }
-        function createReviewFormInnerElement(element, opt) {
+        function createReviewFormInnerElement(element, opt, name) {
             if (element === 'textarea') {
                 var textarea = document.createElement('textarea');
                 return textarea;
             }
             else {
                 var select = document.createElement('select');
+                for (var i = 0; i < Formdata.header.length; i++) {
+                    if (Formdata.header[i].columnName === name)
+                        select.setAttribute('onchange', 'change(this,' + "'"+name+"'" + ')');
+                }
+                
                 console.log(opt);
                 for (var i = 0; i < opt.length; i++) {
                     var o = createOptionsForReviewElement(opt[i]);
@@ -430,7 +435,8 @@
                 success: function (result) {
                     if (result !== null) {
                         // document.getElementById("result").innerHTML = JSON.stringify(result);
-                        alert(result.result);
+                        window.location.href = '/Review/GetReview?id=' + result;
+                       // alert(result.result);
                     } else {
                         //document.getElementById("result").innerHTML = "NULL";
                         alert("KO");

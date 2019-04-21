@@ -2,12 +2,14 @@
 
 var headerElements = [];
 
-function createHeaderElement(name, fcn, parameter) {
+function createHeaderElement(name, fcn, parameter,columnName) {
     var element = new Object();
     element.name = name;
     if (fcn !== null) {
         element.fcn = fcn;
         element.parameter = parameter;
+        console.log(columnName);
+        element.columnName = columnName;
     }
     headerElements.push(element);
 }
@@ -122,7 +124,8 @@ function appendToHeaderTable() {
         var specificColumnEnumValue = document.getElementById('columnEnums').value;
         var txt = document.createTextNode('sum for column: ' + specificColumnValue + ' option: ' + specificColumnEnumValue);
         td1.appendChild(txt);
-        createHeaderElement(atributName, 'sum', specificColumnEnumValue);
+        console.log(specificColumnValue);
+        createHeaderElement(atributName, 'sum', specificColumnEnumValue, specificColumnValue);
         removeColumns();
     }
     tr.appendChild(td);

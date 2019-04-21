@@ -9,6 +9,7 @@ using ReviewApi.Models.Database;
 using ReviewApi.Models.Review;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using ReviewApi.Models.Tameplate;
 
 namespace ReviewApi.Controllers
 {
@@ -39,24 +40,17 @@ namespace ReviewApi.Controllers
             };
             foreach(var p in review.Participant)
             {
-                UserReview userReview = new UserReview();
-                userReview.ReviewId = r.Id;
-                userReview.UsersEmail = p.Email;
-                r.UserReview.Add(userReview);
+               
                 
                 UserReviewRole userReviewRole = new UserReviewRole()
                 {
                     UsersEmail = p.Email,
-                    ReviewRoleId = p.Role
+                    ReviewRoleId = p.Role,
+                    
                 };
-                context.UserReviewRole.Add(userReviewRole);
-                RoleInReview roleInReview = new RoleInReview()
-                {
-                    ReviewId = r.Id,
-                    ReviewRoleId = p.Role
-                };
+               
+                r.UserReviewRole.Add(userReviewRole);
                 
-                r.RoleInReview.Add(roleInReview);
             }
             foreach(int i in review.Artifact)
             {
@@ -84,18 +78,25 @@ namespace ReviewApi.Controllers
             };
             review.Setup = setup;
             review.Participant = GetParticipants(id);
+            List<Header> headers = new List<Header>();
+            List<HeaderRow> rows = context.HeaderRow.Where(x => x.ReviewTameplateId == r.ReviewTameplateId).ToList();
+            for (int i = 0; i < rows.Count; i++)
+            {
+                Header h = new Header() { Fcn = rows[i].Function, Name = rows[i].Name, Id = rows[i].Id, Parameter = rows[i].Parameter };
+                headers.Add(h);
+            }
+            review.HeadersRow = headers;
             return review;
             
         }
         private List<ParticipantToHeader> GetParticipants(int reviewId)
         {
             List<ParticipantToHeader> participants = new List<ParticipantToHeader>();
-            var review = context.Review.Where(r => r.Id == reviewId).Include(role => role.RoleInReview)
-                    .Include(user => user.UserReview).FirstOrDefault();
-            List<int> rolesId = review.RoleInReview.Select(x => x.ReviewRoleId).ToList();
+            var review = context.Review.Where(r => r.Id == reviewId).Include(role => role.UserReviewRole).FirstOrDefault();
+            List<int> rolesId = review.UserReviewRole.Select(x => x.ReviewRoleId).ToList();
             var roles = context.ReviewRole.Where(r => rolesId.Contains(r.Id)).ToList();
-            List<string> emails = review.UserReview.Select(x => x.UsersEmail).ToList();
-            var userRoles = context.UserReviewRole.Where(u => emails.Contains(u.UsersEmail) && rolesId.Contains(u.ReviewRoleId)).ToList();
+            List<string> emails = review.UserReviewRole.Select(x => x.UsersEmail).ToList();
+            var userRoles = context.UserReviewRole.Where(u => emails.Contains(u.UsersEmail) &&u.ReviewId == reviewId).ToList();
             var userDetails = context.Users.Where(x => emails.ToList().Contains(x.Email)).ToList();
             foreach(var u in userRoles)
             {
@@ -114,7 +115,7 @@ namespace ReviewApi.Controllers
             List<ReviewSetup> myReviews = new List<ReviewSetup>();
             var identity = HttpContext.User.Identity as ClaimsIdentity;
             string email = identity.FindFirst("UserEmail").Value;
-            List<UserReview> review = context.UserReview.Where(x => x.UsersEmail == email).Include(r => r.Review).ToList();
+            List<UserReviewRole> review = context.UserReviewRole.Where(x => x.UsersEmail == email).Include(r => r.Review).ToList();
             foreach(var r in review)
             {
                 myReviews.Add(new ReviewSetup()

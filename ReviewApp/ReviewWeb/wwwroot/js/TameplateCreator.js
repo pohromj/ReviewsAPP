@@ -268,6 +268,8 @@ function postReviewTameplate() {
     var tameplateDescription = document.getElementById('tameplateDescription').value;
     var e = document.getElementById('columnType');
     var type = e.options[e.selectedIndex].value;
+    console.log("Header");
+    console.log(headerElements);
     var dta = JSON.stringify({ model: formElements, Name: tameplateName, Descritpion: tameplateDescription, header: headerElements, role: roles });
     console.log(dta);
     $.ajax({

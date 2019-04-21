@@ -15,6 +15,12 @@ namespace ReviewWeb.Controllers
 {
     public class ProjectController : Controller
     {
+        public IActionResult ShowProject(int id)
+        {
+            ProjectViewModel project = new ProjectViewModel();
+            ViewBag.Project = project;
+            return View("Projects");
+        }
         public async Task<IActionResult> ShowProjects()
         {
             using (HttpClient client = new HttpClient())

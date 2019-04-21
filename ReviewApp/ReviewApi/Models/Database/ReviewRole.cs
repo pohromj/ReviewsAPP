@@ -7,7 +7,6 @@ namespace ReviewApi.Models.Database
     {
         public ReviewRole()
         {
-            RoleInReview = new HashSet<RoleInReview>();
             UserReviewRole = new HashSet<UserReviewRole>();
         }
 
@@ -16,7 +15,6 @@ namespace ReviewApi.Models.Database
         public int ReviewTameplateId { get; set; }
 
         public virtual ReviewTameplate ReviewTameplate { get; set; }
-        public virtual ICollection<RoleInReview> RoleInReview { get; set; }
         public virtual ICollection<UserReviewRole> UserReviewRole { get; set; }
     }
 }

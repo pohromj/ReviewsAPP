@@ -10,5 +10,6 @@ namespace ReviewWeb.Models.ReviewTameplateModels
         public string Name { get; set; }
         public string Fcn { get; set; }
         public string Parameter { get; set; }
+        public string ColumnName { get; set; }
     }
 }

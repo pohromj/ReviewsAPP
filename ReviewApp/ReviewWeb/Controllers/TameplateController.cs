@@ -29,7 +29,7 @@ namespace ReviewWeb.Controllers
                 HttpResponseMessage message = await client.PostAsync("http://localhost:55188/api/Tameplate/CreateTameplate", new StringContent(json, Encoding.UTF8, "application/json"));
             }
 
-            return Ok();
+            return RedirectToAction("Index", "Home");
         }
         [HttpGet("GetTameplate")]
         public async Task<ReviewTameplateForForm> GetTameplate(int id)

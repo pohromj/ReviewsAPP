@@ -10,7 +10,9 @@ namespace ReviewApi.Models.Database
         public string Function { get; set; }
         public string Parameter { get; set; }
         public int ReviewTameplateId { get; set; }
+        public int? ReviewColumnId { get; set; }
 
+        public virtual ReviewColumn ReviewColumn { get; set; }
         public virtual ReviewTameplate ReviewTameplate { get; set; }
     }
 }

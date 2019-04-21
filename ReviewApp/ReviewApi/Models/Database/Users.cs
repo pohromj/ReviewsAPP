@@ -10,7 +10,6 @@ namespace ReviewApi.Models.Database
             Project = new HashSet<Project>();
             ReviewTameplate = new HashSet<ReviewTameplate>();
             UserProject = new HashSet<UserProject>();
-            UserReview = new HashSet<UserReview>();
             UserReviewRole = new HashSet<UserReviewRole>();
             Workproduct = new HashSet<Workproduct>();
         }
@@ -26,7 +25,6 @@ namespace ReviewApi.Models.Database
         public virtual ICollection<Project> Project { get; set; }
         public virtual ICollection<ReviewTameplate> ReviewTameplate { get; set; }
         public virtual ICollection<UserProject> UserProject { get; set; }
-        public virtual ICollection<UserReview> UserReview { get; set; }
         public virtual ICollection<UserReviewRole> UserReviewRole { get; set; }
         public virtual ICollection<Workproduct> Workproduct { get; set; }
     }

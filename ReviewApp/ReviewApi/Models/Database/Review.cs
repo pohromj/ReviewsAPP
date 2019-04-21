@@ -11,8 +11,7 @@ namespace ReviewApi.Models.Database
             ArtifactReview = new HashSet<ArtifactReview>();
             IbmArtifact = new HashSet<IbmArtifact>();
             IbmArtifactReview = new HashSet<IbmArtifactReview>();
-            RoleInReview = new HashSet<RoleInReview>();
-            UserReview = new HashSet<UserReview>();
+            UserReviewRole = new HashSet<UserReviewRole>();
         }
 
         public int Id { get; set; }
@@ -31,7 +30,6 @@ namespace ReviewApi.Models.Database
         public virtual ICollection<ArtifactReview> ArtifactReview { get; set; }
         public virtual ICollection<IbmArtifact> IbmArtifact { get; set; }
         public virtual ICollection<IbmArtifactReview> IbmArtifactReview { get; set; }
-        public virtual ICollection<RoleInReview> RoleInReview { get; set; }
-        public virtual ICollection<UserReview> UserReview { get; set; }
+        public virtual ICollection<UserReviewRole> UserReviewRole { get; set; }
     }
 }

@@ -7,6 +7,7 @@ namespace ReviewApi.Models.Database
     {
         public ReviewColumn()
         {
+            HeaderRow = new HashSet<HeaderRow>();
             ReviewColumnTypeEnum = new HashSet<ReviewColumnTypeEnum>();
         }
 
@@ -17,6 +18,7 @@ namespace ReviewApi.Models.Database
         public int ReviewTameplateId { get; set; }
 
         public virtual ReviewTameplate ReviewTameplate { get; set; }
+        public virtual ICollection<HeaderRow> HeaderRow { get; set; }
         public virtual ICollection<ReviewColumnTypeEnum> ReviewColumnTypeEnum { get; set; }
     }
 }

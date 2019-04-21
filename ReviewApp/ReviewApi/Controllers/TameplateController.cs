@@ -29,8 +29,11 @@ namespace ReviewApi.Controllers
             ReviewTameplate tameplate = new ReviewTameplate() { Name = model.Name, Description = model.Descritpion, UsersEmail = email };
             foreach (var row in model.Header)
             {
-                HeaderRow headerRow = new HeaderRow() { Function = row.Fcn, Parameter = row.Parameter, Name = row.Name };
-                tameplate.HeaderRow.Add(headerRow);
+                if (row.ColumnName == null)
+                {
+                    HeaderRow headerRow = new HeaderRow() { Function = row.Fcn, Parameter = row.Parameter, Name = row.Name };
+                    tameplate.HeaderRow.Add(headerRow);
+                }
             }
             foreach (string s in model.Role)
             {
@@ -40,6 +43,16 @@ namespace ReviewApi.Controllers
             foreach (ReviewTameplateViewModel m in model.Model)
             {
                 ReviewColumn column = new ReviewColumn() { Name = m.ColumnName, Type = m.Type };
+                
+                ReviewHeader row = model.Header.Where(x => x.ColumnName == m.ColumnName).FirstOrDefault();
+                if(row != null)
+                {
+                    HeaderRow headerRow = new HeaderRow() { Function = row.Fcn, Parameter = row.Parameter, Name = row.Name };
+                    column.HeaderRow.Add(headerRow);
+                    tameplate.HeaderRow.Add(headerRow);
+                    //context.HeaderRow.Add(headerRow);
+                    //headerRow.ReviewColumn = column;
+                }
                 tameplate.ReviewColumn.Add(column);
                 if (m.Option != null)
                     foreach (string s in m.Option)
@@ -89,8 +102,17 @@ namespace ReviewApi.Controllers
                 List<Header> headers = new List<Header>();
                 foreach (var head in header)
                 {
-                    Header h = new Header() { Fcn = head.Function, Name = head.Name, Parameter = head.Parameter };
-                    headers.Add(h);
+                    if (head.ReviewColumnId != null)
+                    {
+                        ReviewColumn c = context.ReviewColumn.Where(x => x.Id == head.ReviewColumnId).FirstOrDefault();
+                        Header h = new Header() { Fcn = head.Function, Name = head.Name, Parameter = head.Parameter, ColumnName = c.Name };
+                        headers.Add(h);
+                    }
+                    else
+                    {
+                        Header h = new Header() { Fcn = head.Function, Name = head.Name, Parameter = head.Parameter };
+                        headers.Add(h);
+                    }
                 }
                 tameplate.Header = headers;
                 List<Column> columns = new List<Column>();

@@ -10,15 +10,61 @@
     <tr>
         <td>Reviewers: </td>
         <td>
-            @foreach(var p in ViewBag.ReviewSetup.Participant)
+            @foreach (var p in ViewBag.ReviewSetup.Participant)
             {
-                Html.Raw(p.Firstname + " " + p.Lastname + " (" + p.Role + "),");
+                @Html.Raw(@p.Firstname + " " + @p.Lastname + " (" + @p.Role + "),");
+                //@Html.Raw(p.Firstname);
             }
         </td>
     </tr>
+    <tbody id="CustomValue">
+        @foreach (var a in ViewBag.ReviewSetup.HeadersRow)
+        {
+
+            <tr>
+                <td>@a.Name</td>
+                @if (a.Fcn == null)
+                {
+                    <td><input type="text" /></td>
+                }
+                else
+                {
+                    <td><span id="@a.Id"></span></td>
+                }
+            </tr>
+        }
+        </tbody>
 </table>
 
 <div id="ReviewForm">
     @Html.Raw(@ViewBag.ReviewSetup.Setup.Html)
 </div>
 
+<script>
+    function copyRow(index) {
+        var i = index.parentNode.parentNode.rowIndex;
+        var html = index.parentNode.parentNode;
+        console.log(html);
+        var table = document.getElementById('Reviews');
+        var row = table.insertRow(i + 1);
+        row.innerHTML = html.innerHTML;
+    }
+
+    function change(index, name) {
+        var table = document.getElementById('Reviews');
+        var values = document.getElementById('CustomValue').getElementsByTagName('span');
+        console.log(values);
+        var pos = index.parentNode.cellIndex;
+        for (var i = 0; i < values.length; i++) {
+            var count = 0;
+            console.log(table.rows.length);
+            for (var j = 1; j < table.rows.length; j++) {
+                var o = table.rows[j].cells[pos].getElementsByTagName('select');//.childNode;
+                if (o[0].options[o[0].selectedIndex].value === 'ano')
+                    count++;
+                console.log(count);
+            }
+            values[i].innerHTML = count;
+        }
+    }
+</script>

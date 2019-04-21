@@ -28,10 +28,8 @@ namespace ReviewApi.Models.Database
         public virtual DbSet<ReviewColumnTypeEnum> ReviewColumnTypeEnum { get; set; }
         public virtual DbSet<ReviewRole> ReviewRole { get; set; }
         public virtual DbSet<ReviewTameplate> ReviewTameplate { get; set; }
-        public virtual DbSet<RoleInReview> RoleInReview { get; set; }
         public virtual DbSet<SystemRole> SystemRole { get; set; }
         public virtual DbSet<UserProject> UserProject { get; set; }
-        public virtual DbSet<UserReview> UserReview { get; set; }
         public virtual DbSet<UserReviewRole> UserReviewRole { get; set; }
         public virtual DbSet<Users> Users { get; set; }
         public virtual DbSet<Workproduct> Workproduct { get; set; }
@@ -40,8 +38,8 @@ namespace ReviewApi.Models.Database
         {
             if (!optionsBuilder.IsConfigured)
             {
-/*#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=DatabaseReviews;Trusted_Connection=True;");*/
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=reviewDatabase;Trusted_Connection=True;");
             }
         }
 
@@ -164,7 +162,14 @@ namespace ReviewApi.Models.Database
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
+                entity.Property(e => e.ReviewColumnId).HasColumnName("Review_column_id");
+
                 entity.Property(e => e.ReviewTameplateId).HasColumnName("Review_tameplate_id");
+
+                entity.HasOne(d => d.ReviewColumn)
+                    .WithMany(p => p.HeaderRow)
+                    .HasForeignKey(d => d.ReviewColumnId)
+                    .HasConstraintName("Header_row_review_column");
 
                 entity.HasOne(d => d.ReviewTameplate)
                     .WithMany(p => p.HeaderRow)
@@ -418,30 +423,6 @@ namespace ReviewApi.Models.Database
                     .HasConstraintName("Review_tameplate_Users_FK");
             });
 
-            modelBuilder.Entity<RoleInReview>(entity =>
-            {
-                entity.HasKey(e => new { e.ReviewRoleId, e.ReviewId })
-                    .HasName("Relation_10_PK");
-
-                entity.ToTable("Role_in_review");
-
-                entity.Property(e => e.ReviewRoleId).HasColumnName("Review_role_id");
-
-                entity.Property(e => e.ReviewId).HasColumnName("Review_id");
-
-                entity.HasOne(d => d.Review)
-                    .WithMany(p => p.RoleInReview)
-                    .HasForeignKey(d => d.ReviewId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ASS_3");
-
-                entity.HasOne(d => d.ReviewRole)
-                    .WithMany(p => p.RoleInReview)
-                    .HasForeignKey(d => d.ReviewRoleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ASS_2");
-            });
-
             modelBuilder.Entity<SystemRole>(entity =>
             {
                 entity.ToTable("System_role");
@@ -482,37 +463,10 @@ namespace ReviewApi.Models.Database
                     .HasConstraintName("FK_ASS_16");
             });
 
-            modelBuilder.Entity<UserReview>(entity =>
-            {
-                entity.HasKey(e => new { e.UsersEmail, e.ReviewId })
-                    .HasName("Relation_22_PK");
-
-                entity.ToTable("User_review");
-
-                entity.Property(e => e.UsersEmail)
-                    .HasColumnName("Users_email")
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.ReviewId).HasColumnName("Review_id");
-
-                entity.HasOne(d => d.Review)
-                    .WithMany(p => p.UserReview)
-                    .HasForeignKey(d => d.ReviewId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ASS_25");
-
-                entity.HasOne(d => d.UsersEmailNavigation)
-                    .WithMany(p => p.UserReview)
-                    .HasForeignKey(d => d.UsersEmail)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ASS_24");
-            });
-
             modelBuilder.Entity<UserReviewRole>(entity =>
             {
-                entity.HasKey(e => new { e.ReviewRoleId, e.UsersEmail })
-                    .HasName("Relation_14_PK");
+                entity.HasKey(e => new { e.ReviewRoleId, e.UsersEmail, e.ReviewId })
+                    .HasName("User_review_PKv2");
 
                 entity.ToTable("User_review_role");
 
@@ -523,17 +477,25 @@ namespace ReviewApi.Models.Database
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
+                entity.Property(e => e.ReviewId).HasColumnName("Review_id");
+
+                entity.HasOne(d => d.Review)
+                    .WithMany(p => p.UserReviewRole)
+                    .HasForeignKey(d => d.ReviewId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ASS_25");
+
                 entity.HasOne(d => d.ReviewRole)
                     .WithMany(p => p.UserReviewRole)
                     .HasForeignKey(d => d.ReviewRoleId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ASS_6");
+                    .HasConstraintName("User_review_Review_role_FK");
 
                 entity.HasOne(d => d.UsersEmailNavigation)
                     .WithMany(p => p.UserReviewRole)
                     .HasForeignKey(d => d.UsersEmail)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ASS_7");
+                    .HasConstraintName("FK_ASS_24");
             });
 
             modelBuilder.Entity<Users>(entity =>

@@ -66,7 +66,7 @@ namespace ReviewWeb.Controllers
             return View("~/Views/Review/ReviewCreator.cshtml");
         }
         [HttpPost("CreateReview")]
-        public async Task<IActionResult>CreateReview([FromBody] FullReviewSetup setup)
+        public async Task<int>CreateReview([FromBody] FullReviewSetup setup)
         {
             using (HttpClient client = new HttpClient())
             {
@@ -74,7 +74,8 @@ namespace ReviewWeb.Controllers
                 string json = JsonConvert.SerializeObject(setup);
                 HttpResponseMessage message = await client.PostAsync("http://localhost:55188/api/Review/CreateReview", new StringContent(json, Encoding.UTF8, "application/json"));
                 int reviewId = JsonConvert.DeserializeObject<int>(await message.Content.ReadAsStringAsync());
-                return RedirectToAction("GetReview", "Review", new { id = reviewId });
+                //return RedirectToAction("GetReview", "Review", new { id = reviewId });
+                return reviewId;
             }
         }
         [HttpGet]
