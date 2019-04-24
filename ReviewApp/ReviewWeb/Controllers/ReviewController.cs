@@ -87,6 +87,7 @@ namespace ReviewWeb.Controllers
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
                 HttpResponseMessage msg2 = await client.GetAsync("http://localhost:55188/api/Review/GetReview?id=" + id);
                 FullReview review = JsonConvert.DeserializeObject<FullReview>(await msg2.Content.ReadAsStringAsync());
+                ViewBag.ReviewId = id;
                 ViewBag.ReviewSetup = review;
                 return View("~/Views/Review/ReviewForm.cshtml");
             }
@@ -102,6 +103,19 @@ namespace ReviewWeb.Controllers
                 List<ReviewSetup> review = JsonConvert.DeserializeObject<List<ReviewSetup>>(await msg2.Content.ReadAsStringAsync());
                 ViewBag.ReviewSetup = review;
                 return View("~/Views/Review/MyReviews.cshtml");
+            }
+        }
+        [HttpPost("SaveReviewProgress")]
+        public async Task<IActionResult>SaveReviewProgress([FromBody] ReviewProgress progress)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
+                string json = JsonConvert.SerializeObject(progress);
+                HttpResponseMessage message = await client.PostAsync("http://localhost:55188/api/Review/SaveReviewProgress", new StringContent(json, Encoding.UTF8, "application/json"));
+                //int reviewId = JsonConvert.DeserializeObject<int>(await message.Content.ReadAsStringAsync());
+                //return RedirectToAction("GetReview", "Review", new { id = reviewId });
+                return Ok();
             }
         }
     }

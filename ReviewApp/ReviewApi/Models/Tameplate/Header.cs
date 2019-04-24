@@ -12,5 +12,6 @@ namespace ReviewApi.Models.Tameplate
         public string Fcn { get; set; }
         public string Parameter { get; set; }
         public string ColumnName { get; set; }
+        public string Data { get; set; }
     }
 }

@@ -5,6 +5,11 @@ namespace ReviewApi.Models.Database
 {
     public partial class HeaderRow
     {
+        public HeaderRow()
+        {
+            HeaderRowData = new HashSet<HeaderRowData>();
+        }
+
         public int Id { get; set; }
         public string Name { get; set; }
         public string Function { get; set; }
@@ -14,5 +19,6 @@ namespace ReviewApi.Models.Database
 
         public virtual ReviewColumn ReviewColumn { get; set; }
         public virtual ReviewTameplate ReviewTameplate { get; set; }
+        public virtual ICollection<HeaderRowData> HeaderRowData { get; set; }
     }
 }

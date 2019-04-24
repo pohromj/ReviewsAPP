@@ -19,6 +19,7 @@ namespace ReviewApi.Models.Database
         public virtual DbSet<ArtifactDetail> ArtifactDetail { get; set; }
         public virtual DbSet<ArtifactReview> ArtifactReview { get; set; }
         public virtual DbSet<HeaderRow> HeaderRow { get; set; }
+        public virtual DbSet<HeaderRowData> HeaderRowData { get; set; }
         public virtual DbSet<IbmArtifact> IbmArtifact { get; set; }
         public virtual DbSet<IbmArtifactReview> IbmArtifactReview { get; set; }
         public virtual DbSet<Project> Project { get; set; }
@@ -176,6 +177,34 @@ namespace ReviewApi.Models.Database
                     .HasForeignKey(d => d.ReviewTameplateId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Header_Row_Review_tameplate_FK");
+            });
+
+            modelBuilder.Entity<HeaderRowData>(entity =>
+            {
+                entity.ToTable("Header_row_data");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.HeaderRowId).HasColumnName("Header_row_id");
+
+                entity.Property(e => e.ReviewId).HasColumnName("Review_id");
+
+                entity.Property(e => e.Value)
+                    .HasColumnName("value")
+                    .HasMaxLength(250)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.HeaderRow)
+                    .WithMany(p => p.HeaderRowData)
+                    .HasForeignKey(d => d.HeaderRowId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Header_row_FK");
+
+                entity.HasOne(d => d.Review)
+                    .WithMany(p => p.HeaderRowData)
+                    .HasForeignKey(d => d.ReviewId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Review_FK");
             });
 
             modelBuilder.Entity<IbmArtifact>(entity =>

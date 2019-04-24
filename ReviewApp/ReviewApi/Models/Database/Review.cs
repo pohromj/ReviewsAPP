@@ -9,6 +9,7 @@ namespace ReviewApi.Models.Database
         {
             Artifact = new HashSet<Artifact>();
             ArtifactReview = new HashSet<ArtifactReview>();
+            HeaderRowData = new HashSet<HeaderRowData>();
             IbmArtifact = new HashSet<IbmArtifact>();
             IbmArtifactReview = new HashSet<IbmArtifactReview>();
             UserReviewRole = new HashSet<UserReviewRole>();
@@ -28,6 +29,7 @@ namespace ReviewApi.Models.Database
         public virtual Workproduct Workproduct { get; set; }
         public virtual ICollection<Artifact> Artifact { get; set; }
         public virtual ICollection<ArtifactReview> ArtifactReview { get; set; }
+        public virtual ICollection<HeaderRowData> HeaderRowData { get; set; }
         public virtual ICollection<IbmArtifact> IbmArtifact { get; set; }
         public virtual ICollection<IbmArtifactReview> IbmArtifactReview { get; set; }
         public virtual ICollection<UserReviewRole> UserReviewRole { get; set; }

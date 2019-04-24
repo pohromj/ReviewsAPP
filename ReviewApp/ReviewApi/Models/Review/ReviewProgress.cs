@@ -7,7 +7,8 @@ namespace ReviewApi.Models.Review
 {
     public class ReviewProgress
     {
+        public int ReviewId { get; set; }
         public string Html { get; set; }
-        List<HeaderData> HeaderDatas { get; set; }
+        public List<HeaderData> HeaderDatas { get; set; }
     }
 }

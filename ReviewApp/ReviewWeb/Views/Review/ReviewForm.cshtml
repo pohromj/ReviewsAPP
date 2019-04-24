@@ -27,18 +27,28 @@
                         <td>@a.Name</td>
                         @if (a.Fcn == null)
                         {
-                            <td><input type="text"  class="form-control"/></td>
+                            <td><input type="text"  class="form-control" value="@a.Data" data-count-id="@a.Id"/></td>
                         }
                         else
                         {
-                            <td><span data-count-col="@a.ColumnName" data-count-val="@a.Parameter"></span></td>
+                            <td><span data-count-col="@a.ColumnName" data-count-val="@a.Parameter" data-count-id="@a.Id">@a.Data</span></td>
                         }
                     </tr>
                 }
             </tbody>
         </table>
     </div>
-    <div class="col"></div>
+    <div class="col">
+        <div class="card float-right" style="width: 18rem;">
+            <div class="card-body">
+                <ul>
+                    <li><button class="btn btn-primary" onclick="saveReviewProgress(@ViewBag.ReviewId)">Save</button></li>
+                    <li><button class="btn btn-primary" onclick="saveReview()">Change</button></li>
+                    <li><button class="btn btn-primary" onclick="saveReview()">Update</button></li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
 <div id="ReviewForm">
     @Html.Raw(@ViewBag.ReviewSetup.Setup.Html)
@@ -46,7 +56,7 @@
 <script>
     var tbl;
     $(document).ready(function () {
-        tbl = $('#Reviews').DataTable({ paging: false, "scrollX": true, destroy: true });
+        tbl = $('#Reviews').DataTable({ paging: false, "scrollX": true, destroy: true, ordering: false });
 
         /*var textarea = document.getElementById('Reviews').getElementsByTagName('textarea');
         for(var i = 0; i < textarea.length; i++){
@@ -70,17 +80,32 @@
 </script>
 <script>
     function copyRow(index) {
-        var i = index.parentNode.parentNode.rowIndex;
-        var html = index.parentNode.parentNode;
-        console.log(html);
-        var table = document.getElementById('Reviews');
-        var row = table.insertRow(i + 1);
-        row.innerHTML = html.innerHTML;
+
+
+        var html = index.parentNode.parentNode.cloneNode(true);
+        html.deleteCell(0);
+        var a = html.insertCell(0);
+        a.appendChild(createRemoveButton());
+
+        tbl.row.add(html).draw();//.draw();
+        var currentPage = tbl.page();
+        console.log(currentPage);
+        var idx = index.parentNode.parentNode.rowIndex,
+            rowCount = tbl.data().length - 1,
+            insertedRow = tbl.row(rowCount).data(),
+            tempRow;
+        for (var i = rowCount; i > idx; i--) {
+            console.log(idx);
+            tempRow = tbl.row(i - 1).data();
+            tbl.row(i).data(tempRow);
+            tbl.row(i - 1).data(insertedRow);
+        }
     }
 
     function change(index, name) {
         var table = document.getElementById('Reviews');
         var values = document.getElementById('CustomValue').getElementsByTagName('span');
+        changeSelectedValue(index);
         console.log(values);
         var pos = index.parentNode.cellIndex;
         for (var i = 0; i < values.length; i++) {
@@ -100,4 +125,88 @@
             }
         }
     }
+    function removeRow(index) {
+        var index = index.parentNode.parentNode;//.rowIndex;
+        tbl.row(index).remove().draw();
+    }
+
+    function createRemoveButton() {
+        var btn = document.createElement('button');
+        btn.type = "button";
+        btn.setAttribute('class', 'btn btn-outline-danger btn-sm');
+        btn.setAttribute('onclick', 'removeRow(this)');
+        var i = document.createElement('i');
+        i.setAttribute('class', 'fas fa-eraser');
+        btn.appendChild(i);
+        var text = document.createTextNode('Remove');
+        btn.appendChild(text);
+        return btn;
+    }
+    function saveReviewProgress(id) {
+        tbl.destroy();
+        var html = document.getElementById('ReviewForm');
+        changeTextAreas();
+        var htmldata = document.createTextNode(html.innerHTML);
+        console.log(htmldata);
+        var headerData = createObjects();
+        console.log(headerData);
+        var data = JSON.stringify({ reviewId: id, Html: htmldata.data, HeaderDatas: headerData });
+        console.log(data);
+        $.ajax({
+            type: 'POST',
+            url: "http://localhost:49727/Review/SaveReviewProgress", 
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            data: data,
+            success: function (result) {
+                if (result !== null) {
+                    // document.getElementById("result").innerHTML = JSON.stringify(result);
+                    //window.location.href = '/Review/GetReview?id=' + result;
+                    alert("Progress was saved");
+                } else {
+                    //document.getElementById("result").innerHTML = "NULL";
+                    alert("KO");
+
+                }
+            }
+        });
+
+
+
+        tbl = $('#Reviews').DataTable({ paging: false, "scrollX": true, destroy: true, ordering: false });
+    }
+    function createObjects() {
+        var data = [];
+        var spans = document.getElementById('CustomValue').getElementsByTagName('span');
+        for (var i = 0; i < spans.length; i++) {
+            var o = new Object();
+            o.Data = spans[i].innerText;
+            o.HeaderRowId = spans[i].getAttribute('data-count-id');
+            data.push(o);
+        }
+        var inputs = document.getElementById('CustomValue').getElementsByTagName('input');
+        for (var i = 0; i < inputs.length; i++) {
+            var o = new Object();
+            o.Data = inputs[i].value;
+            o.HeaderRowId = inputs[i].getAttribute('data-count-id');
+            data.push(o);
+        }
+        return data;
+    }
+    function changeSelectedValue(select) {
+        for (var i = 0; i < select.options.length; i++) {
+            select.options[i].removeAttribute("selected");
+        }
+        select.options[select.selectedIndex].setAttribute('selected', 'selected');
+    }
+    function changeTextAreas() {
+        var textAreas = document.getElementById('Reviews').getElementsByTagName('textarea');
+        for (var i = 0; i < textAreas.length; i++) {
+            var text = textAreas[i].value;
+            
+            textAreas[i].innerText = text;
+            
+        }
+    }
+    
 </script>

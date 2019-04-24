@@ -38,19 +38,22 @@ namespace ReviewApi.Controllers
                 ReviewTameplateId = review.Setup.Tameplate,
                 Html = review.Setup.Html               
             };
+            var tmp = context.ReviewTameplate.Where(x => x.Id == review.Setup.Tameplate).
+                Include(p => p.HeaderRow).FirstOrDefault();
+                
+            foreach(var t in tmp.HeaderRow)
+            {
+                HeaderRowData data = new HeaderRowData() { HeaderRowId = t.Id };
+                r.HeaderRowData.Add(data);                
+            }
             foreach(var p in review.Participant)
             {
-               
-                
                 UserReviewRole userReviewRole = new UserReviewRole()
                 {
                     UsersEmail = p.Email,
                     ReviewRoleId = p.Role,
-                    
                 };
-               
                 r.UserReviewRole.Add(userReviewRole);
-                
             }
             foreach(int i in review.Artifact)
             {
@@ -83,7 +86,8 @@ namespace ReviewApi.Controllers
             for (int i = 0; i < rows.Count; i++)
             {
                 string name = context.ReviewColumn.Where(x => x.Id == rows[i].ReviewColumnId).Select(a => a.Name).FirstOrDefault();
-                Header h = new Header() { Fcn = rows[i].Function, Name = rows[i].Name, Id = rows[i].Id, Parameter = rows[i].Parameter, ColumnName = name };
+                string data = context.HeaderRowData.Where(x => x.ReviewId == r.Id && x.HeaderRowId == rows[i].Id).Select(o => o.Value).FirstOrDefault();
+                Header h = new Header() { Fcn = rows[i].Function, Name = rows[i].Name, Id = rows[i].Id, Parameter = rows[i].Parameter, ColumnName = name, Data = data };
                 headers.Add(h);
             }
             review.HeadersRow = headers;
@@ -126,6 +130,21 @@ namespace ReviewApi.Controllers
                 });
             }
             return myReviews;
+        }
+        [HttpPost]
+        [Route("SaveReviewProgress")]
+        public IActionResult SaveReviewProgress([FromBody] ReviewProgress progress)
+        {
+            Review review = context.Review.Where(x => x.Id == progress.ReviewId).Include(p => p.HeaderRowData).FirstOrDefault();
+            review.Html = progress.Html;
+            foreach(var p in progress.HeaderDatas)
+            {
+                var k = review.HeaderRowData.Where(x => x.HeaderRowId == p.HeaderRowId).FirstOrDefault();
+                k.Value = p.Data;
+            }
+            context.SaveChanges();
+            return Ok();
+
         }
     }
 }
