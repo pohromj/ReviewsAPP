@@ -11,16 +11,16 @@ using System.Text;
 
 namespace ReviewWeb.Controllers
 {
-    [Route("Tameplate")]
+    [Route("Template")]
     public class TameplateController : Controller
     {
 
         public IActionResult TameplateCreator()
         {
-            return View("TameplateCreator");
+            return View("TemplateCreator");
         }
-        [HttpPost("SaveTameplate")]
-        public async Task<IActionResult> SaveReviewTameplate([FromBody]ReviewTameplate model)
+        [HttpPost("SaveTemplate")]
+        public async Task<IActionResult> SaveReviewTemplate([FromBody]ReviewTameplate model)
         {
             using (HttpClient client = new HttpClient())
             {
@@ -31,8 +31,8 @@ namespace ReviewWeb.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-        [HttpGet("GetTameplate")]
-        public async Task<ReviewTameplateForForm> GetTameplate(int id)
+        [HttpGet("GetTemplate")]
+        public async Task<ReviewTameplateForForm> GetTemplate(int id)
         {
             using (HttpClient client = new HttpClient())
             {

@@ -3,8 +3,10 @@
     ViewData["Title"] = "TameplateCreator";
 }
 
+<script src="~/js/main.js"></script>
+<!--
 <script type="text/javascript" src="~/js/TameplateCreator.js"></script>
-<script type="text/javascript" src="~/js/headerConfig.js"></script>
+<script type="text/javascript" src="~/js/headerConfig.js"></script>-->
 <h2>TameplateCreator</h2>
 <div id="accordion">
     <div class="card">
@@ -20,8 +22,8 @@
 
             <div class="card-body">
                 <table>
-                    <tr><td>Tameplate name:</td><td><input type="text" id="tameplateName" class="form-control"></td></tr>
-                    <tr><td>Tameplate description:</td><td><textarea id="tameplateDescription" class="form-control" style="resize:both;"></textarea></td></tr>
+                    <tr><td>Tameplate name:</td><td><input type="text" id="templateName" class="form-control"></td></tr>
+                    <tr><td>Tameplate description:</td><td><textarea id="templateDescription" class="form-control" style="resize:both;"></textarea></td></tr>
                 </table>
             </div>
         </div>
@@ -136,7 +138,7 @@
                     </div>
                 </div>
 
-                <input type="button" value="add column" onclick="addColumn();" class="btn btn-primary btn-sm">
+                <input type="button" value="add column" onclick="addColumn();" class="btn btn-primary btn-sm" id="addColumnBtn">
                 <input type="button" value="clear" onclick="removeElement();" class="btn btn-secondary btn-sm">
 
                 <br>

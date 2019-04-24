@@ -4,42 +4,70 @@
 }
 
 <h2>ReviewForm</h2>
-<table>
-    <tr><td>Project name: </td><td>@ViewBag.ReviewSetup.Setup.ProjectName</td></tr>
-    <tr><td>Work product name: </td><td>@ViewBag.ReviewSetup.Setup.WorkProductName</td></tr>
-    <tr>
-        <td>Reviewers: </td>
-        <td>
-            @foreach (var p in ViewBag.ReviewSetup.Participant)
-            {
-                @Html.Raw(@p.Firstname + " " + @p.Lastname + " (" + @p.Role + "),");
-                //@Html.Raw(p.Firstname);
-            }
-        </td>
-    </tr>
-    <tbody id="CustomValue">
-        @foreach (var a in ViewBag.ReviewSetup.HeadersRow)
-        {
-
+<div class="row">
+    <div class="col">
+        <table class="table table-bordered">
+            <tr><td>Project name: </td><td>@ViewBag.ReviewSetup.Setup.ProjectName</td></tr>
+            <tr><td>Work product name: </td><td>@ViewBag.ReviewSetup.Setup.WorkProductName</td></tr>
             <tr>
-                <td>@a.Name</td>
-                @if (a.Fcn == null)
-                {
-                    <td><input type="text" /></td>
-                }
-                else
-                {
-                    <td><span id="@a.Id"></span></td>
-                }
+                <td>Reviewers: </td>
+                <td>
+                    @foreach (var p in ViewBag.ReviewSetup.Participant)
+                    {
+                        @Html.Raw(@p.Firstname + " " + @p.Lastname + " (" + @p.Role + "),");
+                        //@Html.Raw(p.Firstname);
+                    }
+                </td>
             </tr>
-        }
-        </tbody>
-</table>
+            <tbody id="CustomValue">
+                @foreach (var a in ViewBag.ReviewSetup.HeadersRow)
+                {
 
+                    <tr>
+                        <td>@a.Name</td>
+                        @if (a.Fcn == null)
+                        {
+                            <td><input type="text"  class="form-control"/></td>
+                        }
+                        else
+                        {
+                            <td><span data-count-col="@a.ColumnName" data-count-val="@a.Parameter"></span></td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col"></div>
+</div>
 <div id="ReviewForm">
     @Html.Raw(@ViewBag.ReviewSetup.Setup.Html)
 </div>
+<script>
+    var tbl;
+    $(document).ready(function () {
+        tbl = $('#Reviews').DataTable({ paging: false, "scrollX": true, destroy: true });
 
+        /*var textarea = document.getElementById('Reviews').getElementsByTagName('textarea');
+        for(var i = 0; i < textarea.length; i++){
+        textarea[i].addEventListener('keydown', autosize);
+        }
+     
+        function autosize(){
+        var el = this;
+        setTimeout(function(){
+            el.style.cssText = 'height:auto; padding:0';
+            // for box-sizing other than "content-box" use:
+            // el.style.cssText = '-moz-box-sizing:content-box';
+            el.style.cssText = 'height:' + el.scrollHeight + 'px';
+        },0);
+        }*/
+        $('#Reviews').on('change keyup keydown paste cut', 'textarea', function () {
+            $(this).height(0).height(this.scrollHeight);
+        }).find('textarea').change();
+    });
+
+</script>
 <script>
     function copyRow(index) {
         var i = index.parentNode.parentNode.rowIndex;
@@ -56,15 +84,20 @@
         console.log(values);
         var pos = index.parentNode.cellIndex;
         for (var i = 0; i < values.length; i++) {
-            var count = 0;
-            console.log(table.rows.length);
-            for (var j = 1; j < table.rows.length; j++) {
-                var o = table.rows[j].cells[pos].getElementsByTagName('select');//.childNode;
-                if (o[0].options[o[0].selectedIndex].value === 'ano')
-                    count++;
-                console.log(count);
+            var col = values[i].getAttribute('data-count-col');
+            if (col === name) {
+                var count = 0;
+                var countedValue = values[i].getAttribute('data-count-val');
+                console.log(table.rows.length);
+                for (var j = 1; j < table.rows.length; j++) {
+                    var o = table.rows[j].cells[pos].getElementsByTagName('select');//.childNode;
+
+                    if (o[0].options[o[0].selectedIndex].value === countedValue)
+                        count++;
+                    console.log(count);
+                }
+                values[i].innerHTML = count;
             }
-            values[i].innerHTML = count;
         }
     }
 </script>

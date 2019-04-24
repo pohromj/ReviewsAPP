@@ -79,6 +79,7 @@ namespace ReviewWeb.Controllers
             }
         }
         [HttpGet]
+        [Route("GetReview")]
         public async Task<IActionResult>GetReview(int id)
         {
             using (HttpClient client = new HttpClient())

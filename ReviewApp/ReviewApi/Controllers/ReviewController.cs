@@ -82,7 +82,8 @@ namespace ReviewApi.Controllers
             List<HeaderRow> rows = context.HeaderRow.Where(x => x.ReviewTameplateId == r.ReviewTameplateId).ToList();
             for (int i = 0; i < rows.Count; i++)
             {
-                Header h = new Header() { Fcn = rows[i].Function, Name = rows[i].Name, Id = rows[i].Id, Parameter = rows[i].Parameter };
+                string name = context.ReviewColumn.Where(x => x.Id == rows[i].ReviewColumnId).Select(a => a.Name).FirstOrDefault();
+                Header h = new Header() { Fcn = rows[i].Function, Name = rows[i].Name, Id = rows[i].Id, Parameter = rows[i].Parameter, ColumnName = name };
                 headers.Add(h);
             }
             review.HeadersRow = headers;

@@ -1,0 +1,67 @@
+
+#Reviews textarea{
+    /*width: -webkit-fill-available;*/
+    display: block;
+    box-sizing: border-box;
+    overflow: hidden;
+    background-color: inherit;
+    resize: none;
+    border: 0px;
+    height: 100%;
+}
+
+#Reviews_filter input{
+    display: inline-block;
+    height: calc(1.5em + .75rem + 2px);
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    margin: 5px;
+}
+
+#Reviews table{
+  table-layout: auto;
+}
+#Reviews select{
+    height: auto;
+    border: none;
+    background-color: inherit;
+    min-width: 150px;
+}
+
+#Reviews select:active{
+    height: auto;
+    border: none;
+    background-color: inherit;
+}
+
+#Reviews select:hover{
+    height: auto;
+    border: none;
+    background-color: inherit;
+}
+#Reviews select:focus{
+    height: auto;
+    border: none;
+    background-color: inherit;
+    box-shadow: none;
+}
+
+#Reviews td {
+  width: 300px;
+  padding: 0px;
+}
+.first-col{
+    width: 10%;
+}
+div.dataTables_wrapper {
+        width: 800px;
+        margin: 0 auto;
+    }

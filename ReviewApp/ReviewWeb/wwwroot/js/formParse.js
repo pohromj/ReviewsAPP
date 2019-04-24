@@ -183,11 +183,12 @@ function createOptions(select, data) {
 }
 
 function getTameplate(id) {
+    console.log("get template fnc");
     var tameplate;
     $.ajax({
         type: 'GET',
         async: false,
-        url: "/Tameplate/GetTameplate?id=" + id, // http://localhost:60000/api/upload/ -- na tuto URL se budou posilat diagramy (XML)
+        url: "/Template/GetTemplate?id=" + id, // http://localhost:60000/api/upload/ -- na tuto URL se budou posilat diagramy (XML)
         dataType: 'json',
         contentType: "application/json; charset=utf-8",
 

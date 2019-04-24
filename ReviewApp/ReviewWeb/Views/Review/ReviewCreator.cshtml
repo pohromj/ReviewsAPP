@@ -186,7 +186,7 @@
     </div>
 </div>
 <div id="ReviewContent">
-    <table id="Reviews"></table>
+    <table id="Reviews" class="display cell-border nowrap" style="width: 100%"></table>
 </div>
 <div>
     <a asp-action="Index">Back to List</a>
@@ -292,8 +292,12 @@
         function createReviewWithData(artifacts, dataForColumns) {
             console.log('createReviewWithData:     ' + dataForColumns);
             var table = document.getElementById('Reviews');
+            var head = document.createElement('thead');
+            
             var headerRow = createReviewFormHeaderss();
-            table.appendChild(headerRow);
+
+            head.appendChild(headerRow);
+            table.appendChild(head);
             console.log(table);
             var firstRow = createReviewFormRow();
             table.appendChild(firstRow);
@@ -331,10 +335,18 @@
         }
         function createButtonElementToReviewRow() {
             var td = document.createElement('td');
+            td.setAttribute('class', 'first-col');
             var btn = document.createElement('button');
-            var text = document.createTextNode('Clone');
+            //var text = document.createTextNode('Clone');
             btn.setAttribute('onclick', 'copyRow(this)');
+            btn.setAttribute('class', 'btn btn-outline-primary btn-sm');
+            var i = document.createElement('i');
+            i.setAttribute('class', 'far fa-clone');
+            btn.appendChild(i);
+            var text = document.createTextNode('Clone');
+            btn.appendChild(i);
             btn.appendChild(text);
+            
             td.appendChild(btn);
             return td;
 
@@ -342,13 +354,16 @@
         function createReviewFormInnerElement(element, opt, name) {
             if (element === 'textarea') {
                 var textarea = document.createElement('textarea');
+                textarea.setAttribute('class', 'form-control');
                 return textarea;
             }
             else {
                 var select = document.createElement('select');
+                select.setAttribute('class', 'form-control input-lg');
                 for (var i = 0; i < Formdata.header.length; i++) {
                     if (Formdata.header[i].columnName === name)
-                        select.setAttribute('onchange', 'change(this,' + "'"+name+"'" + ')');
+                        select.setAttribute('onchange', 'change(this,' + "'" + name + "'" + ')');
+                    
                 }
                 
                 console.log(opt);
