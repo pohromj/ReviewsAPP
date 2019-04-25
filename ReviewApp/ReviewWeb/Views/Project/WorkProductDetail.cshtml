@@ -2,14 +2,24 @@
 @{
     ViewData["Title"] = "WorkProductDetail";
 }
-
-<h2>WorkProductDetail</h2>
-
+<center><h2>Work Product Detail</h2></center>
 <table>
     <tr><td>Name: </td> <td>@ViewBag.workProductDetail.Name</td></tr>
     <tr><td>Description: </td><td>@ViewBag.workProductDetail.Description</td></tr>
 </table>
 <h2>Work product artifacts</h2>
-<div id="pagination">
-    @await Html.PartialAsync("~/Views/Shared/ArtifactsPagination.cshtml")
-</div>
+
+<table id="artifacts" class="display cell-border nowrap" style="width: 100%">
+    <thead><tr><th>Reference ID</th><th>ArtifactName</th></tr></thead>
+    <tbody>
+        @foreach (var a in ViewBag.Artifacts)
+        {
+            <tr><td>@a.IbmId</td><td><a target="_blank" href="@a.Url">@a.Name</a></td></tr>
+        }
+    </tbody>
+</table>
+<script>
+    $(document).ready(function () {
+        $('#artifacts').DataTable({ paging: true});
+    });
+</script>

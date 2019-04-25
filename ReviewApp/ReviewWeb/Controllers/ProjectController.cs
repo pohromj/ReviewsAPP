@@ -119,9 +119,12 @@ namespace ReviewWeb.Controllers
                 HttpResponseMessage message = await client.GetAsync("http://localhost:55188/api/Project/GetWorkProductDetail?id=" + id);
                 var workProductDetail = JsonConvert.DeserializeObject<WorkProductViewModel>(await message.Content.ReadAsStringAsync());
                 ViewBag.workProductDetail = workProductDetail;
-                HttpResponseMessage msg = await client.GetAsync("http://localhost:55188/api/Artifact/GetArtifactsPerPage?workProductId=" + id + "&&page=" + 0);
+                HttpResponseMessage msg = await client.GetAsync("http://localhost:55188/api/Artifact/GetAllArtifactForWorkProduct?id=" + id);
+                
+                //HttpResponseMessage msg = await client.GetAsync("http://localhost:55188/api/Artifact/GetArtifactsPerPage?workProductId=" + id + "&&page=" + 0);
                 var artifacts = JsonConvert.DeserializeObject<List<JazzArtifact>>(await msg.Content.ReadAsStringAsync());
-                HttpResponseMessage msg2 = await client.GetAsync("http://localhost:55188/api/Artifact/NumberOfArtifactsInWorkProduct?workProductId=" + id);
+                ViewBag.Artifacts = artifacts;
+                /*HttpResponseMessage msg2 = await client.GetAsync("http://localhost:55188/api/Artifact/NumberOfArtifactsInWorkProduct?workProductId=" + id);
                 int numberOfArtifact = JsonConvert.DeserializeObject<int>(await msg2.Content.ReadAsStringAsync());
                 if (artifacts != null)
                 {
@@ -131,7 +134,7 @@ namespace ReviewWeb.Controllers
                         ViewBag.NumberOfPage = numberOfArtifact / 15;
                     ViewBag.Artifacts = artifacts;
                     ViewBag.ActivePage = 0;
-                }
+                }*/
                 return View("WorkProductDetail");
             }
             

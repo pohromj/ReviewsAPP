@@ -796,7 +796,7 @@ add Review_column_id integer
 alter table dbo.header_row
 add foreign key (review_column_id) references dbo.review_column(id)
 
-insert into dbo.System_Role values('Admin')
+i/*nsert into dbo.System_Role values('Admin')
 insert into dbo.System_Role values('User')
 
 
@@ -804,7 +804,7 @@ insert into dbo.Users values('jos@vsb.cz','2r6SCaYxTtpB6Ydfwv25aMk1t0wAiEymo62ee
 insert into dbo.Users values('michal@vsb.cz','oDtjiylrmjp+1HT5zK4++3GW7QQwOyqvVqf0+jXpKVo=', 'Michal', 'Prikryl','2vHLV303NPkOQuKHUjNB1g==', 2)
 
 insert into dbo.Project_type values('Own project')
-insert into dbo.Project_type values('IBM project')
+insert into dbo.Project_type values('IBM project')*/
 
 alter table header_row
 drop constraint review_column_id
@@ -812,10 +812,11 @@ drop constraint review_column_id
 alter table dbo.header_row
 add constraint Header_row_review_column
 foreign key (Review_column_id) references dbo.review_Column(id)
-select * from dbo.Header_Row
-select * from User_review_role
+--select * from dbo.Header_Row
+--select * from User_review_role
 
-
+/*
 update dbo.Header_row
 set Name = 'soucet'
-where id = 13
+where id = 13*/
+select * from dbo.Header_row

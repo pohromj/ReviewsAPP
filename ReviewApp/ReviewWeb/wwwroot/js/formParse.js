@@ -17,7 +17,7 @@ function createSelectForColumnData(id) {
             console.log('headers pass');*/
 
             for (var i = 0; i < Formdata.columns.length; i++) {
-                if (Formdata.columns[i].type == 'textarea') {
+                if (Formdata.columns[i].type === 'textarea') {
                     var row = document.createElement('tr');
                     var td1 = document.createElement('td');
                     var name = document.createTextNode(Formdata.columns[i].columnName);
@@ -40,7 +40,7 @@ function deleteRowsFromTable(table) {
 }
 function slct() {
     var select = document.createElement('select');
-    var optionNames = ['','name', 'ibmid'];
+    var optionNames = ['','name', 'ibmId'];
     for (var i = 0; i < optionNames.length; i++) {
         var o = document.createElement('option');
         o.text = optionNames[i];
@@ -238,11 +238,16 @@ function createArtifactTable(id) {
     var table = document.getElementById('ArtifactTable').getElementsByTagName('tbody');
     //var dltTbl = document.getElementById('ArtifactTable');
     //if (dltTbl.rows.length > 1)
+    //artifactsForReview.clear();
+    allArtifacts.destroy();
     deleteRowsFromTable(table[0]);
     for (var i = 0; i < artifacts.length; i++) {
         var row = createRowForArtifact(artifacts[i]);
+        //allArtifacts.row.add(row);
         table[0].appendChild(row);
     }
+    allArtifacts = $('#ArtifactTable').DataTable({ paging: true, "scrollX": true, destroy: true });
+    //allArtifacts.draw();
 }
 function createRowForArtifact(data) {
     var row = document.createElement('tr');
@@ -259,9 +264,14 @@ function createRowForArtifact(data) {
     var td3 = document.createElement('td');
     var btn = document.createElement('button');
     var btnText = document.createTextNode('Add');
+    var span = document.createElement('i');
+
+    span.setAttribute('class', "fas fa-plus-circle");
+    btn.appendChild(span);
 
     btn.appendChild(btnText);
     btn.setAttribute('onclick', 'addArtifactToReview(this);');
+    btn.setAttribute('class', 'btn btn-primary');
     td3.appendChild(btn);
 
     row.appendChild(td);
@@ -269,6 +279,7 @@ function createRowForArtifact(data) {
     row.appendChild(td3);
     return row;
 }
+/*
 function addArtifactToReview(id) {
     var row = id.parentNode.parentNode;
     var table = document.getElementById('artifactsForReview').getElementsByTagName('tbody');
@@ -292,4 +303,45 @@ function removeArtifactFromReview(id) {
     btn.setAttribute('onclick', 'addArtifactToReview(this);');
     cell.appendChild(btn);
     table[0].appendChild(row);
+}*/
+function addArtifactToReview(id) {
+    var index = id.parentNode.parentNode.rowIndex;
+    console.log(index);
+    var row = allArtifacts.row(index - 1).data();
+    var btn = document.createElement('button');
+    var btnText = document.createTextNode('Remove');
+    var span = document.createElement('i');
+    
+    span.setAttribute('class', "far fa-times-circle");
+    btn.appendChild(span);
+    btn.appendChild(btnText);
+    btn.setAttribute('onclick', 'removeArtifactFromReview(this);');
+    btn.setAttribute('class', 'btn btn-danger');
+    var div = document.createElement('div');
+    div.appendChild(btn);
+    row[2] = div.innerHTML;
+    allArtifacts.row(index -1).remove().draw();
+    artifactsForReview.row.add(row).draw();
 }
+function removeArtifactFromReview(id) {
+    console.log(id);
+    var index = id.parentNode.parentNode.rowIndex;
+    console.log(index);
+    var row = artifactsForReview.row(index - 1).data();
+    console.log(row);
+    var btn = document.createElement('button');
+    var btnText = document.createTextNode('Add');
+    var span = document.createElement('i');
+    
+    span.setAttribute('class', "fas fa-plus-circle");
+    btn.appendChild(span);
+    btn.appendChild(btnText);
+    btn.setAttribute('onclick', 'addArtifactToReview(this);');
+    btn.setAttribute('class', 'btn btn-primary');
+    var div = document.createElement('div');
+    div.appendChild(btn);
+    row[2] = div.innerHTML;
+    artifactsForReview.row(index - 1).remove().draw();
+    allArtifacts.row.add(row).draw();
+}
+

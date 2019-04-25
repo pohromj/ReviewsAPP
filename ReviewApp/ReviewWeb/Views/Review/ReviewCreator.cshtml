@@ -165,16 +165,16 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col">
-                        Pick data for column
-                        <table id="ArtifactTable" class="table table-bordered">
-                            <tr><th>ID</th><th>Artifact</th></tr>
+
+                        <table id="ArtifactTable" class="display cell-border nowrap" style="width:100%;">
+                            <thead><tr><th>ID</th><th>Artifact</th><th><button onclick="addAllArtifacts()">Add all</button></th></tr></thead>
                             <tbody></tbody>
 
                         </table>
                     </div>
                     <div class="col">
-                        <table id="artifactsForReview">
-                            <tr><th>ID</th><th>Artifact</th></tr>
+                        <table id="artifactsForReview" class="display cell-border nowrap" style="width:100%;">
+                            <thead><tr><th>ID</th><th>Artifact</th><th><button onclick="removeAllArtifacts()" class="btn-outline-primary btn-sm"><i class="fas fa-eraser"></i>Remove all</button></th></tr></thead>
                             <tbody></tbody>
 
                         </table>
@@ -191,12 +191,39 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+<script>
+    var artifactsForReview;
+    var allArtifacts;
+    $(document).ready(function () {
+        allArtifacts = $('#ArtifactTable').DataTable({ paging: true, "scrollX": true, destroy: true });
+        artifactsForReview = $('#artifactsForReview').DataTable({ paging: true, "scrollX": true, destroy: true });
+    });
+    function addAllArtifacts() {
+        //var table = document.getElementById('ArtifactTable').getElementsByTagName('tbody');
 
+        for (var i = 0; i < allArtifacts.data().length; i++) {
+            var row = allArtifacts.row(i).data();
+            console.log(row);
+            artifactsForReview.row.add(row);
+        }
+        artifactsForReview.draw();
+        allArtifacts.clear();
+    }
+    function removeAllArtifacts() {
+        for (var i = 0; i < artifactsForReview.data().length; i++) {
+            var row = artifactsForReview.row(i).data();
+            allArtifacts.row.add(row);
+        }
+        allArtifacts.draw();
+        artifactsForReview.clear();
+    }
+
+</script>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script src="~/js/formParse.js"></script>
     <script src="~/js/ReviewUsers.js"></script>
-<script>
+    <script>
         function getReviewSetup() {
             var reviewSetup = new Object();
             reviewSetup.name = document.getElementById('ReviewName').value;
@@ -246,11 +273,16 @@
             return dataForColumns;
         }
         function getArtifactsForReview() {
-            var table = document.getElementById('artifactsForReview');
+            /*var table = document.getElementById('artifactsForReview');
             var artifacts = [];
             for (var i = 1; i < table.rows.length; i++) {
                 var artifact = table.rows[i].cells[0].innerText;
                 artifacts.push(artifact);
+            }*/
+            var artifacts = [];
+            for (var i = 0; i < artifactsForReview.data().length; i++) {
+                var row = artifactsForReview.row(i).data();
+                artifacts.push(row[0]);
             }
             return artifacts;
 
@@ -264,7 +296,7 @@
             console.log('data');
             var artifacts = getArtifactsForReview();
             console.log('artifacts');
-          
+
             var a = getSpecificArtifacts(artifacts);
             console.log(a);
 
@@ -293,12 +325,13 @@
             console.log('createReviewWithData:     ' + dataForColumns);
             var table = document.getElementById('Reviews');
             var head = document.createElement('thead');
-            
+
             var headerRow = createReviewFormHeaderss();
 
             head.appendChild(headerRow);
             table.appendChild(head);
             console.log(table);
+
             var firstRow = createReviewFormRow();
             table.appendChild(firstRow);
             fillFormWithData(firstRow, artifacts, dataForColumns);
@@ -346,7 +379,7 @@
             var text = document.createTextNode('Clone');
             btn.appendChild(i);
             btn.appendChild(text);
-            
+
             td.appendChild(btn);
             return td;
 
@@ -363,9 +396,9 @@
                 for (var i = 0; i < Formdata.header.length; i++) {
                     if (Formdata.header[i].columnName === name)
                         select.setAttribute('onchange', 'change(this,' + "'" + name + "'" + ')');
-                    
+
                 }
-                
+
                 console.log(opt);
                 for (var i = 0; i < opt.length; i++) {
                     var o = createOptionsForReviewElement(opt[i]);
@@ -399,14 +432,18 @@
             }
         }
         function fillRowWithData(row, indexes, artifact) {
+            console.log(artifact);
             var clone = row.cloneNode(true);
             for (var i = 0; i < indexes.length; i++) {
 
                 var area = row.cells[indexes[i].columnIndex].firstChild;// = artifact[indexes.dataType];
+                console.log("Pod textem ma byt text area");
+                console.log(area);
                 /*console.log(area);
                 console.log(artifact);
                 console.log(artifact.artifactProperties[indexes[i].dataType]);*/
                 console.log(indexes);
+
                 console.log(artifact[indexes[i].dataType]);
                 var txt = document.createTextNode(artifact[indexes[i].dataType]);
                 area.appendChild(txt);
@@ -443,17 +480,16 @@
             //console.log(dta);
             $.ajax({
                 type: 'POST',
-                url: "http://localhost:49727/Review/CreateReview", // http://localhost:60000/api/upload/ -- na tuto URL se budou posilat diagramy (XML)
+                url: "http://localhost:49727/Review/CreateReview",
                 dataType: 'json',
                 contentType: "application/json; charset=utf-8",
                 data: data,
                 success: function (result) {
                     if (result !== null) {
-                        // document.getElementById("result").innerHTML = JSON.stringify(result);
+                        
                         window.location.href = '/Review/GetReview?id=' + result;
-                       // alert(result.result);
+                        
                     } else {
-                        //document.getElementById("result").innerHTML = "NULL";
                         alert("KO");
 
                     }
@@ -462,6 +498,6 @@
 
         }
 
-</script>
+    </script>
 
 }
