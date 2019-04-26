@@ -3,18 +3,36 @@
     ViewData["Title"] = "WorkProductDetail";
 }
 <center><h2>Work Product Detail</h2></center>
-<table>
-    <tr><td>Name: </td> <td>@ViewBag.workProductDetail.Name</td></tr>
-    <tr><td>Description: </td><td>@ViewBag.workProductDetail.Description</td></tr>
-</table>
+<div class="row">
+    <div class="col">
+        <table class="table">
+            <tr><td>Name: </td> <td>@ViewBag.workProductDetail.Name</td></tr>
+            <tr><td>Description: </td><td>@ViewBag.workProductDetail.Description</td></tr>
+        </table>
+    </div>
+    <div class="col">
+        <div class="card float-right" style="width: 18rem;">
+            <div class="card-body right">
+                <center>
+                    <h3> Work product navigation</h3>
+                    <ul class="navigation">
+                        <li><a class="btn btn-primary" href="@Url.Action("ReviewCreator","Review", new { projectID = @ViewBag.workProductDetail.ProjectId, workproductId = @ViewBag.workProductDetail.Id })">Start review</a></li>
+                        <li><button class="btn btn-primary" onclick="">Project setup</button></li>
+                        <li><button class="btn btn-primary" onclick="">Not sure yet</button></li>
+                    </ul>
+                </center>
+            </div>
+        </div>
+    </div>
+</div>
 <h2>Work product artifacts</h2>
 
 <table id="artifacts" class="display cell-border nowrap" style="width: 100%">
-    <thead><tr><th>Reference ID</th><th>ArtifactName</th></tr></thead>
+    <thead><tr><th>Reference ID</th><th>ArtifactName</th><th>Reviews</th></tr></thead>
     <tbody>
         @foreach (var a in ViewBag.Artifacts)
         {
-            <tr><td>@a.IbmId</td><td><a target="_blank" href="@a.Url">@a.Name</a></td></tr>
+            <tr><td>@a.IbmId</td><td><a target="_blank" href="@a.Url">@a.Name</a></td><td><a class="btn btn-primary" href="@Url.Action("GetReviewsForArtifact","Review",new { id = @a.Id})">Show Reviews</a></td></tr>
         }
     </tbody>
 </table>

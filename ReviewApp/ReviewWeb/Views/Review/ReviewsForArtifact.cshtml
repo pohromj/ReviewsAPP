@@ -1,0 +1,29 @@
+﻿
+@{
+    ViewData["Title"] = "ReviewsForArtifact";
+}
+
+<h2>Reviews For Artifact</h2>
+<table class="table">
+    <tr><td>Artifact ID </td><td>@ViewBag.Artifact.Artifact.Id</td></tr>
+    <tr><td>IBM ID </td><td>@ViewBag.Artifact.Artifact.IbmId</td></tr>
+    <tr><td>NAME </td><td><a href="@ViewBag.Artifact.Artifact.Url">@ViewBag.Artifact.Artifact.Name</a></td></tr>
+</table>
+
+<table id="Reviews", class="display cell-border nowrap" style="width: 100%">
+    <thead><tr><th>Review</th></tr></thead>
+    <tbody>
+        @foreach(var r in ViewBag.Reviews)
+        {
+            <tr><td><a href="@Url.Action("GetReview","Review",new { id = @r.Id})">@r.Name</a></td></tr>
+        }
+    </tbody>
+</table>
+<script>
+    $(document).ready(function () {
+        tbl = $('#Reviews').DataTable(
+            {
+                paging: true,
+            });
+    });
+</script>

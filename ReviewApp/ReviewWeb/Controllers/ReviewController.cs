@@ -11,6 +11,7 @@ using ReviewWeb.Models.ProjectModels;
 using ReviewWeb.Models.UserModels;
 using Microsoft.AspNetCore.Http;
 using System.Text;
+using ReviewWeb.Models.Artifact;
 
 namespace ReviewWeb.Controllers
 {
@@ -18,7 +19,7 @@ namespace ReviewWeb.Controllers
     public class ReviewController : Controller
     {
         [HttpGet("projectID")]
-        public async Task<IActionResult> ReviewCreator(int projectID)
+        public async Task<IActionResult> ReviewCreator(int projectID, int? workproductId)
         {
             List<SelectListItem> listItemsTameplates = new List<SelectListItem>();
             List<SelectListItem> listItemsWorkProducts = new List<SelectListItem>();
@@ -37,7 +38,10 @@ namespace ReviewWeb.Controllers
                 var workProducts = JsonConvert.DeserializeObject<List<WorkProductViewModel>>(await msg.Content.ReadAsStringAsync());
                 foreach (var k in workProducts)
                 {
-                    listItemsWorkProducts.Add(new SelectListItem() { Text = k.Name, Value = k.Id.ToString() });
+                    if(k.Id == workproductId)
+                    listItemsWorkProducts.Add(new SelectListItem() { Text = k.Name, Value = k.Id.ToString(), Selected = true });
+                    else
+                        listItemsWorkProducts.Add(new SelectListItem() { Text = k.Name, Value = k.Id.ToString()});
                 }
                 ViewBag.WorkProducts = listItemsWorkProducts;
                 HttpResponseMessage message = await client.GetAsync("http://localhost:55188/api/User/GetAllUsers");
@@ -116,6 +120,20 @@ namespace ReviewWeb.Controllers
                 //int reviewId = JsonConvert.DeserializeObject<int>(await message.Content.ReadAsStringAsync());
                 //return RedirectToAction("GetReview", "Review", new { id = reviewId });
                 return Ok();
+            }
+        }
+
+        [HttpGet]
+        [Route("GetReviewsForArtifact")]
+        public async Task<IActionResult> GetReviewsForArtifact(int id)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
+                HttpResponseMessage msg2 = await client.GetAsync("http://localhost:55188/api/Review/GetReviewsForArtifact?id=" + id);
+                var artifact = JsonConvert.DeserializeObject<ReviewsForArtifact>(await msg2.Content.ReadAsStringAsync());
+                ViewBag.Artifact = artifact;
+                return View("~/Views/Review/ReviewsForArtifact.cshtml");
             }
         }
     }

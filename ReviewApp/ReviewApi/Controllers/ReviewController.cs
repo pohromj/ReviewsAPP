@@ -10,6 +10,7 @@ using ReviewApi.Models.Review;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using ReviewApi.Models.Tameplate;
+using ReviewApi.Models.Artifact;
 
 namespace ReviewApi.Controllers
 {
@@ -58,7 +59,11 @@ namespace ReviewApi.Controllers
             foreach(int i in review.Artifact)
             {
                 var artifact = context.IbmArtifact.Where(a => a.Id == i).FirstOrDefault();
+                IbmArtifactReview ar = new IbmArtifactReview();
+                ar.IbmArtifactIbmId = artifact.IbmId;
+                r.IbmArtifactReview.Add(ar);
                 r.IbmArtifact.Add(artifact);
+
             }
             context.Workproduct.Where(w => w.Id == review.Setup.WorkProduct).FirstOrDefault().Review.Add(r);
             //context.Review.Add(r);
@@ -145,6 +150,26 @@ namespace ReviewApi.Controllers
             context.SaveChanges();
             return Ok();
 
+        }
+        [HttpGet]
+        [Route("GetReviewsForArtifact")]
+        public ReviewsForArtifact GetReviewsForArtifact(int id)
+        {
+            ReviewsForArtifact artifact = new ReviewsForArtifact();
+            
+            var art = context.IbmArtifact.Where(x => x.Id == id).Include(p => p.IbmArtifactReview).FirstOrDefault();
+            JazzArtifact a = new JazzArtifact() { Id = art.Id, IbmId = art.IbmId, Name = art.Name, Url = art.Url };
+            artifact.Artifact = a;
+            List<int>ids = art.IbmArtifactReview.Select(x => x.ReviewId).ToList();
+            var reviews = context.Review.Where(x => ids.Contains(x.Id)).ToList();
+            List<ReviewSetup> setups = new List<ReviewSetup>();
+            foreach(var r in reviews)
+            {
+                ReviewSetup s = new ReviewSetup() { Id = r.Id, Name = r.Name };
+                setups.Add(s);
+            }
+            artifact.Reviews = setups;
+            return artifact;
         }
     }
 }

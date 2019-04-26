@@ -58,9 +58,6 @@
                                 <select asp-for="Tameplate" asp-items="@ViewBag.AllTameplates" class="form-control" onchange="createForm();" id="tameplateSelect"></select>
                                 <span asp-validation-for="Tameplate" class="text-danger"></span>
                             </div>
-                            <div class="form-group">
-                                <input type="submit" value="Create" class="btn btn-default" />
-                            </div>
                         </form>
                     </div>
                     <div class="col">
@@ -181,16 +178,14 @@
                     </div>
                 </div>
             </div>
-            <button onclick="saveReview();">Create review</button>
+            <center><button onclick="saveReview();" class="btn btn-primary">Create review</button></center>
         </div>
     </div>
 </div>
-<div id="ReviewContent">
+<div id="ReviewContent" hidden>
     <table id="Reviews" class="display cell-border nowrap" style="width: 100%"></table>
 </div>
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+
 <script>
     var artifactsForReview;
     var allArtifacts;
@@ -204,6 +199,7 @@
         for (var i = 0; i < allArtifacts.data().length; i++) {
             var row = allArtifacts.row(i).data();
             console.log(row);
+            row[2] = createButtonHtml('Remove', 'far fa-times-circle', 'btn btn-danger', 'removeArtifactFromReview(this);');
             artifactsForReview.row.add(row);
         }
         artifactsForReview.draw();
@@ -212,11 +208,27 @@
     function removeAllArtifacts() {
         for (var i = 0; i < artifactsForReview.data().length; i++) {
             var row = artifactsForReview.row(i).data();
+            row[2] = createButtonHtml('Add', 'fas fa-plus-circle', 'btn btn-primary', 'addArtifactToReview(this);');
             allArtifacts.row.add(row);
         }
         allArtifacts.draw();
         artifactsForReview.clear();
     }
+    function createButtonHtml(text, istyle, btnstyle, fnc) {
+        var btn = document.createElement('button');
+        var btnText = document.createTextNode(text);
+        var span = document.createElement('i');
+
+        span.setAttribute('class', "far fa-times-circle");
+        btn.appendChild(span);
+        btn.appendChild(btnText);
+        btn.setAttribute('onclick', fnc);
+        btn.setAttribute('class', btnstyle);
+        var div = document.createElement('div');
+        div.appendChild(btn);
+        return div.innerHTML;
+    }    
+
 
 </script>
 @section Scripts {
@@ -225,20 +237,34 @@
     <script src="~/js/ReviewUsers.js"></script>
     <script>
         function getReviewSetup() {
-            var reviewSetup = new Object();
-            reviewSetup.name = document.getElementById('ReviewName').value;
-            reviewSetup.description = document.getElementById('ReviewDescription').value;
-            reviewSetup.startDate = document.getElementById('ReviewStartDate').value;
-            reviewSetup.endDate = document.getElementById('ReviewEndDate').value;
-            var wrkprdct = document.getElementById('workProduct');
-            console.log(wrkprdct);
-            if (wrkprdct.length > 0)
-                reviewSetup.workProduct = wrkprdct.options[wrkprdct.selectedIndex].value;
-            var tmplt = document.getElementById('tameplateSelect');
-            if (tmplt.length > 0)
-                reviewSetup.tameplate = tmplt.options[tmplt.selectedIndex].value;
-            reviewSetup.project = document.getElementById('projectId').value;
-            return reviewSetup;
+            changeBorderBack();
+            if (validateReviewSetupData() === true) {
+                var reviewSetup = new Object();
+                reviewSetup.name = document.getElementById('ReviewName').value;
+                reviewSetup.description = document.getElementById('ReviewDescription').value;
+                reviewSetup.startDate = document.getElementById('ReviewStartDate').value;
+
+                reviewSetup.endDate = document.getElementById('ReviewEndDate').value;
+                console.log(reviewSetup.endDate);
+                var wrkprdct = document.getElementById('workProduct');
+                console.log(wrkprdct);
+                if (wrkprdct.length > 0)
+                    reviewSetup.workProduct = wrkprdct.options[wrkprdct.selectedIndex].value;
+                var tmplt = document.getElementById('tameplateSelect');
+                if (tmplt.length > 0)
+                    reviewSetup.tameplate = tmplt.options[tmplt.selectedIndex].value;
+                reviewSetup.project = document.getElementById('projectId').value;
+                return reviewSetup;
+            }
+           
+        }
+        function changeBorderBack() {
+            document.getElementById('ReviewName').style = "";
+            document.getElementById('ReviewDescription').style = "";
+            document.getElementById('ReviewStartDate').style = "";
+            document.getElementById('ReviewEndDate').style = "";
+            document.getElementById('workProduct').style = "";
+            document.getElementById('tameplateSelect').style = "";
         }
         function getParticipants() {
             var table = document.getElementById('participants');
@@ -305,8 +331,60 @@
             reviewSetup.html = html;
             console.log(html);
             var json = JSON.stringify({ setup: reviewSetup, participant: participants, columnsData: dataForColumns, artifact: artifacts });
-            //console.log(json);
+            console.log(json);
             saveToDatabase(json);
+        }
+        function changeBorder(element) {
+            element.style = "border: 2px solid #ff0000 ";
+        }
+        function validateReviewSetupData() {
+            var isValid = true;
+            name = document.getElementById('ReviewName').value;
+            if (name === "") {
+                changeBorder(document.getElementById('ReviewName'));
+                isValid = false;
+            }
+            startDate = document.getElementById('ReviewStartDate').value;
+            endDate = document.getElementById('ReviewEndDate').value;
+            if (validateDate(startDate, endDate) === false) {
+                changeBorder(document.getElementById('ReviewStartDate'));
+                changeBorder(document.getElementById('ReviewEndDate'));
+                isValid = false;
+            }
+            var wrkprdct = document.getElementById('workProduct');
+            if (wrkprdct.length > 0) {
+                
+                workProduct = wrkprdct.options[wrkprdct.selectedIndex].value;
+                if (workProduct === "") {
+                    changeBorder(wrkprdct);
+                    isValid = false;
+                }
+                
+            }
+                
+            var tmplt = document.getElementById('tameplateSelect');
+            if (tmplt.length > 0) {
+                tameplate = tmplt.options[tmplt.selectedIndex].value;
+                if (tameplate === "") {
+                    changeBorder(tmplt);
+                    isValid = false;
+                }
+            }
+            return isValid;    
+            //reviewSetup.project = document.getElementById('projectId').value;
+        }
+        function validateDate(startDate, endDate) {
+            if (startDate === "")
+                return false;
+            if (endDate === "")
+                return false;
+            var dateA = new Date(startDate).getTime();
+            console.log(dateA);
+            var dateB = new Date(endDate).getTime();
+            console.log(dateB);
+            if (dateB < dateA)
+                return false;
+            return true;
         }
         function getSpecificArtifacts(idx) {
             var artifacts = [];
