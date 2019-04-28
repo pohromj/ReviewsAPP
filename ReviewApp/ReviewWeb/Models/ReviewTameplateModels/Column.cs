@@ -7,6 +7,7 @@ namespace ReviewWeb.Models.ReviewTameplateModels
 {
     public class Column
     {
+        public int? Id { get; set; }
         public string Type { get; set; }
         public string ColumnName { get; set; }
         public List<string> Option { get; set; }

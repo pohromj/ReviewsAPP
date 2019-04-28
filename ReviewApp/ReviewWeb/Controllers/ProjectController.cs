@@ -13,6 +13,7 @@ using ReviewWeb.Models.Artifact;
 
 namespace ReviewWeb.Controllers
 {
+    [Route("Project")]
     public class ProjectController : Controller
     {
         public IActionResult ShowProject(int id)
@@ -21,6 +22,7 @@ namespace ReviewWeb.Controllers
             ViewBag.Project = project;
             return View("Projects");
         }
+        [Route("ShowProjects")]
         public async Task<IActionResult> ShowProjects()
         {
             using (HttpClient client = new HttpClient())
@@ -38,6 +40,7 @@ namespace ReviewWeb.Controllers
             }
             return View("Project");
         }
+        [Route("CreateProject")]
         public async Task<IActionResult> CreateProject()
         {
             using (HttpClient client = new HttpClient())
@@ -56,7 +59,7 @@ namespace ReviewWeb.Controllers
             }
                 
         }
-
+        [Route("SaveProject")]
         [HttpPost]
         public async Task<IActionResult> SaveProject(CreateProjectViewModel model)
         {
@@ -68,6 +71,7 @@ namespace ReviewWeb.Controllers
             }
             return RedirectToAction("ShowProjects", "Project");
         }
+        [Route("ProjectDetail")]
         [HttpGet]
         public async Task<IActionResult> ProjectDetail(int projectId)
         {
@@ -98,6 +102,7 @@ namespace ReviewWeb.Controllers
             }
             return View("ProjectDetail");
         }
+        [Route("SaveWorkProduct")]
         [HttpPost]
         public async Task<IActionResult> SaveWorkProduct(WorkProductViewModel workProduct)
         {
@@ -110,6 +115,7 @@ namespace ReviewWeb.Controllers
             }
             return RedirectToAction("ProjectDetail", "Project", new { projectId = workProduct.ProjectId });
         }
+        [Route("GetWorkProductDetail")]
         [HttpGet]
         public async Task<IActionResult>GetWorkProductDetail(int id)
         {
@@ -139,5 +145,37 @@ namespace ReviewWeb.Controllers
             }
             
         }
+        [HttpPut("ChangeWorkProduct")]
+        public async Task<IActionResult>ChangeWorkProduct([FromBody] WorkProductViewModel model)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
+                string json = JsonConvert.SerializeObject(model);
+                HttpResponseMessage message = await client.PutAsync("http://localhost:55188/api/Project/ChangeWorkProduct", new StringContent(json, Encoding.UTF8, "application/json"));
+                return Ok();
+            }
+        }
+        [Route("DeleteProject")]
+        public async Task<IActionResult>DeleteProject(int id)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
+                HttpResponseMessage message = await client.DeleteAsync("http://localhost:55188/api/Project/DeleteProject?id=" + id);
+                return RedirectToAction("ShowProjects", "Project");
+            }
+        }
+        [Route("DeleteWorkproduct")]
+        public async Task<IActionResult>DeleteWorkProduct(int id, int projectid)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
+                HttpResponseMessage message = await client.DeleteAsync("http://localhost:55188/api/Project/DeleteWorkProduct?id=" + id);
+                return RedirectToAction("ProjectDetail", "Project", new { projectId = projectid });
+            }
+        }
+
     }
 }

@@ -18,7 +18,7 @@ namespace ReviewWeb.Controllers
         public IActionResult SpecificArtifacts(int projectId, int workProductId)
         {
             ViewBag.projectId = projectId;
-            ViewBag.workProductId = 1;//workProductId;
+            ViewBag.workProductId = workProductId;
             return View("~/Views/Review/ArtifactsSpecification.cshtml");
         }
         //[HttpPost("CheckIbmXml")]

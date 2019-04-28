@@ -121,8 +121,11 @@ function addColumn() {
     else {
         var tab = document.getElementById('firstTableRow');
         var th = document.createElement('th');
-        var columnName = document.getElementById('columnName');
+        var columnName = document.getElementById('columnThName');
+        console.log(columnName);
         var text = document.createTextNode(columnName.value);
+        
+
         var deleteButton = document.createElement('button');
         var spn = document.createElement('span');
         var x = document.createTextNode('x');
@@ -478,7 +481,7 @@ function appendToHeaderTable() {
 }
 function removeRowFromHeaderTable(index) {
     // od  rowIndexu odecitam pocet radku, ktere jsou pevne definované v tabulce
-    var row = index.parentNode.parentNode.rowIndex - 6;
+    var row = index.parentNode.parentNode.rowIndex - 4;
     var table = document.getElementById('CustomValue');
     table.deleteRow(row);
 }

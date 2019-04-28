@@ -8,13 +8,14 @@ using Newtonsoft.Json;
 using ReviewWeb.Models.ReviewTameplateModels;
 using Microsoft.AspNetCore.Http;
 using System.Text;
+using ReviewWeb.Models.ReviewModels;
 
 namespace ReviewWeb.Controllers
 {
     [Route("Template")]
     public class TameplateController : Controller
     {
-
+        [Route("TameplateCreator")]
         public IActionResult TameplateCreator()
         {
             return View("TemplateCreator");
@@ -40,6 +41,37 @@ namespace ReviewWeb.Controllers
                 HttpResponseMessage message = await client.GetAsync("http://localhost:55188/api/Tameplate/GetTameplate?id=" + id);
                 var tameplate = JsonConvert.DeserializeObject<ReviewTameplateForForm>(await message.Content.ReadAsStringAsync());
                 return tameplate;
+            }
+        }
+        [Route("ShowAllTemplates")]
+        public async Task<IActionResult> ShowAllTemplates()
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
+                HttpResponseMessage msg = await client.GetAsync("http://localhost:55188/api/Tameplate/GetAllTameplates");
+                List<ReviewTameplateForDropDown> templates = JsonConvert.DeserializeObject<List<ReviewTameplateForDropDown>>(await msg.Content.ReadAsStringAsync());
+                ViewBag.Templates = templates;
+                return View("~/Views/Tameplate/Templates.cshtml");
+            }
+        }
+        [HttpGet]
+        [Route("GetTemplateDetail")]
+        public IActionResult GetTemplateDetail(int id)
+        {
+            ViewBag.TemplateId = id;
+            return View("~/Views/Tameplate/TemplateDetail.cshtml");
+        }
+        [HttpPut("UpdateTemplate")]
+        //[Route("UpdateTemplate")]
+        public async Task<IActionResult> UpdateTemplate([FromBody]ReviewTameplateForForm model)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
+                string json = JsonConvert.SerializeObject(model);
+                HttpResponseMessage msg = await client.PutAsync("http://localhost:55188/api/Tameplate/UpdateTemplate", new StringContent(json, Encoding.UTF8, "application/json"));
+                return Ok();
             }
         }
     }

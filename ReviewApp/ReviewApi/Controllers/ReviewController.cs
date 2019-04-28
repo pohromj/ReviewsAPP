@@ -61,6 +61,7 @@ namespace ReviewApi.Controllers
                 var artifact = context.IbmArtifact.Where(a => a.Id == i).FirstOrDefault();
                 IbmArtifactReview ar = new IbmArtifactReview();
                 ar.IbmArtifactIbmId = artifact.IbmId;
+                ar.IbmArtifactId = artifact.Id;
                 r.IbmArtifactReview.Add(ar);
                 r.IbmArtifact.Add(artifact);
 

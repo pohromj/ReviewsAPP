@@ -7,7 +7,7 @@ namespace ReviewApi.Models.Tameplate
 {
     public class Header
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string Name { get; set; }
         public string Fcn { get; set; }
         public string Parameter { get; set; }

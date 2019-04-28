@@ -62,7 +62,11 @@
                 "scrollX": true,
                 "scrollY": 500,
                 destroy: true,
-                ordering: false
+                ordering: false,
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ]
             });
 
         $('#Reviews').on('change keyup keydown paste cut', 'textarea', function () {

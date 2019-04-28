@@ -10,6 +10,7 @@ using System.Security.Claims;
 using ReviewApi.Models.Project;
 using ReviewApi.Models.User;
 using ReviewApi.Models.Artifact;
+using Microsoft.EntityFrameworkCore;
 
 namespace ReviewApi.Controllers
 {
@@ -172,6 +173,59 @@ namespace ReviewApi.Controllers
             return model;
 
         }
+        [HttpPut]
+        [Route("ChangeWorkProduct")]
+        public IActionResult ChangeWorkProduct([FromBody] WorkProductModel model)
+        {
+            var wk = context.Workproduct.Where(x => x.Id == model.Id).FirstOrDefault();
+            wk.Name = model.Name;
+            wk.Description = model.Description;
+            context.SaveChanges();
+            return Ok();
+        }
 
+        [HttpDelete]
+        [Route("DeleteProject")]
+        public IActionResult DeleteProject(int id)
+        {
+            var project = context.Project.Where(x => x.Id == id).FirstOrDefault();
+            var workproducts = context.Workproduct.Where(x => x.ProjectId == project.Id).ToList();
+            var userProject = context.UserProject.Where(x => x.ProjectId == project.Id).ToList();
+            var reviews = context.Review.Where(x => workproducts.Select(p => p.Id).Contains(x.WorkproductId)).ToList();
+            var reviewRoles = context.UserReviewRole.Where(x => reviews.Select(p => p.Id).Contains(x.ReviewId)).ToList();
+            var artifacts = context.IbmArtifact.Where(x => workproducts.Select(p => p.Id).Contains(x.WorkproductId)).ToList();
+            var headervalues = context.HeaderRowData.Where(x => reviews.Select(p => p.Id).Contains(x.ReviewId)).ToList();
+            var ibmreview = context.IbmArtifactReview.Where(x => artifacts.Select(p => p.Id).Contains(x.IbmArtifactId)).ToList();
+
+            context.IbmArtifactReview.RemoveRange(ibmreview);
+            context.HeaderRowData.RemoveRange(headervalues);
+            context.IbmArtifact.RemoveRange(artifacts);
+            context.UserReviewRole.RemoveRange(reviewRoles);
+            context.Review.RemoveRange(reviews);
+            context.UserProject.RemoveRange(userProject);
+            context.Workproduct.RemoveRange(workproducts);
+            context.Project.Remove(project);
+            context.SaveChanges();
+            return Ok();
+        }
+        [HttpDelete]
+        [Route("DeleteWorkProduct")]
+        public IActionResult DeleteWorkProduct(int id)
+        {
+            var workproducts = context.Workproduct.Where(x => x.Id == id).FirstOrDefault();
+            var reviews = context.Review.Where(x => x.WorkproductId == workproducts.Id).ToList();
+            var reviewRoles = context.UserReviewRole.Where(x => reviews.Select(p => p.Id).Contains(x.ReviewId)).ToList();
+            var artifacts = context.IbmArtifact.Where(x => x.WorkproductId == workproducts.Id).ToList();
+            var headervalues = context.HeaderRowData.Where(x => reviews.Select(p => p.Id).Contains(x.ReviewId)).ToList();
+            var ibmreview = context.IbmArtifactReview.Where(x => artifacts.Select(p => p.Id).Contains(x.IbmArtifactId)).ToList();
+            context.IbmArtifactReview.RemoveRange(ibmreview);
+            context.HeaderRowData.RemoveRange(headervalues);
+            context.IbmArtifact.RemoveRange(artifacts);
+            context.UserReviewRole.RemoveRange(reviewRoles);
+            context.Review.RemoveRange(reviews);
+            context.Workproduct.Remove(workproducts);
+            context.SaveChanges();
+            return Ok();
+        }
     }
 }

@@ -1,0 +1,26 @@
+﻿
+@{
+    ViewData["Title"] = "Templates";
+}
+
+<center><h2>Templates</h2></center>
+
+
+<table id="templates" class="display cell-border nowrap" style="width: 100%">
+    <thead><tr><th>Template name</th></tr></thead>
+    <tbody>
+        @foreach(var t in ViewBag.Templates)
+        {
+            <tr><td><a href="@Url.Action("GetTemplateDetail","Template", new { id = @t.ID})">@t.Name</a></td></tr>
+        }
+    </tbody>
+</table>
+<a href="@Url.Action("TameplateCreator","Template")" class="btn btn-primary">Create Template</a>
+<script>
+    $(document).ready(function () {
+        tbl = $('#templates').DataTable(
+            {
+                paging: true,
+            });
+    });
+</script>

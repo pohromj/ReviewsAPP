@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using ReviewApi.Models.Database;
 using ReviewApi.Models.Tameplate;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace ReviewApi.Controllers
 {
@@ -105,12 +106,12 @@ namespace ReviewApi.Controllers
                     if (head.ReviewColumnId != null)
                     {
                         ReviewColumn c = context.ReviewColumn.Where(x => x.Id == head.ReviewColumnId).FirstOrDefault();
-                        Header h = new Header() { Fcn = head.Function, Name = head.Name, Parameter = head.Parameter, ColumnName = c.Name };
+                        Header h = new Header() { Fcn = head.Function, Name = head.Name, Parameter = head.Parameter, ColumnName = c.Name, Id = head.Id };
                         headers.Add(h);
                     }
                     else
                     {
-                        Header h = new Header() { Fcn = head.Function, Name = head.Name, Parameter = head.Parameter };
+                        Header h = new Header() { Fcn = head.Function, Name = head.Name, Parameter = head.Parameter, Id = head.Id };
                         headers.Add(h);
                     }
                 }
@@ -119,7 +120,7 @@ namespace ReviewApi.Controllers
                 var cols = context.ReviewColumn.Where(c => c.ReviewTameplateId == tmp.Id).ToList();
                 foreach (var c in cols)
                 {
-                    Column col = new Column() { ColumnName = c.Name, Type = c.Type };
+                    Column col = new Column() { ColumnName = c.Name, Type = c.Type, Id = c.Id };
                     var opt = context.ReviewColumnTypeEnum.Where(o => o.ReviewColumnId == c.Id).ToList();
                     List<string> options = new List<string>();
                     foreach (var o in opt)
@@ -133,6 +134,36 @@ namespace ReviewApi.Controllers
                 return tameplate;
             }
             return null;
+
+        }
+        [HttpPut]
+        [Route("UpdateTemplate")]
+        public IActionResult UpdateTemplate([FromBody] ReviewTameplateForForm model)
+        {
+            var review = context.ReviewTameplate.Where(x => x.Id == model.Id).Include(x => x.ReviewColumn).Include(x => x.HeaderRow).FirstOrDefault();
+            List<int> reviewColsId = review.ReviewColumn.Select(x => x.Id).ToList();
+            foreach(var m in model.Header)
+            {
+                var h = review.HeaderRow.Where(x => x.Id == m.Id).FirstOrDefault();
+                if(h != null)
+                {
+                    //priradit znaceni deleted protoze nasledne generovani celeho review by nefungovalo                   
+                }
+            }
+
+
+            foreach (var r in model.Columns)
+            {
+                ReviewColumn c = review.ReviewColumn.Where(x => x.Id == r.Id).FirstOrDefault();
+                if(c != null)
+                {
+                    c.Name = r.ColumnName;
+                    
+                }
+            }
+
+
+            return Ok();
 
         }
     }

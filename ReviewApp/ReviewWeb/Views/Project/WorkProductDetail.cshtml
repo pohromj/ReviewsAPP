@@ -6,8 +6,9 @@
 <div class="row">
     <div class="col">
         <table class="table">
-            <tr><td>Name: </td> <td>@ViewBag.workProductDetail.Name</td></tr>
-            <tr><td>Description: </td><td>@ViewBag.workProductDetail.Description</td></tr>
+            <tr><td>Name: </td> <td id="inputTD">@ViewBag.workProductDetail.Name</td></tr>
+            <tr><td>Description: </td><td id="textareaTD">@ViewBag.workProductDetail.Description</td></tr>
+            <tr id="lastRow" hidden="hidden"><td><button class="btn btn-primary" onclick="updateWk(@ViewBag.workProductDetail.Id)">Save</button></td><td><button class="btn btn-danger" onclick="cancel()">Cancel</button></td></tr>
         </table>
     </div>
     <div class="col">
@@ -18,7 +19,9 @@
                     <ul class="navigation">
                         <li><a class="btn btn-primary" href="@Url.Action("ReviewCreator","Review", new { projectID = @ViewBag.workProductDetail.ProjectId, workproductId = @ViewBag.workProductDetail.Id })">Start review</a></li>
                         <li><button class="btn btn-primary" onclick="">Project setup</button></li>
-                        <li><button class="btn btn-primary" onclick="">Not sure yet</button></li>
+                        <li><button class="btn btn-primary" onclick="updateWorkProduct()">Update Work Product</button></li>
+                        <li><a class="btn btn-primary" href="@Url.Action("SpecificArtifacts","Artifact", new { projectId = @ViewBag.workProductDetail.ProjectId, workProductId = @ViewBag.workProductDetail.Id})">Add artifacts</a></li>
+                        <li><a class="btn btn-danger" href="@Url.Action("DeleteWorkproduct","Project", new { id = @ViewBag.workProductDetail.Id, projectid = @ViewBag.workProductDetail.ProjectId})">Delete WorkProduct</a></li>
                     </ul>
                 </center>
             </div>
@@ -40,4 +43,53 @@
     $(document).ready(function () {
         $('#artifacts').DataTable({ paging: true});
     });
+    var previousName;
+    var previousDescription;
+    function updateWorkProduct() {
+        var input = document.createElement('input');
+        var nameTd = document.getElementById('inputTD');
+        previousName = nameTd.innerText;
+        input.value = nameTd.innerText;
+        nameTd.innerText = "";
+        var txtArea = document.createElement('textarea');
+        var txtTd = document.getElementById('textareaTD');
+        previousDescription = txtTd.innerText;
+        txtArea.value = txtTd.innerText;
+        txtTd.innerText = "";
+        nameTd.appendChild(input);
+        txtTd.appendChild(txtArea);
+        var row = document.getElementById('lastRow');
+        row.removeAttribute('hidden');
+    }
+    function cancel() {
+        var nameTd = document.getElementById('inputTD');
+        nameTd.innerHTML = "";
+        nameTd.innerText = previousName;
+        var desc = document.getElementById('textareaTD');
+        desc.innerHTML = "";
+        desc.innerText = previousDescription;
+        var row = document.getElementById('lastRow');
+        row.setAttribute('hiddent', 'hidden');
+    }
+    function updateWk(id) {
+        var obj = new Object();
+        obj.Id = id;
+        obj.Name = document.getElementById('inputTD').getElementsByTagName('input')[0].value;
+        obj.Description = document.getElementById('textareaTD').getElementsByTagName('textarea')[0].value;
+        var data = JSON.stringify(obj);
+        $.ajax({
+            type: 'PUT',
+            url: "http://localhost:49727/Project/ChangeWorkProduct",
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            data: data,
+            success: function (result) {
+                
+            }
+        });
+        previousName = obj.Name;
+        previousDescription = obj.Description;
+        cancel();
+
+    }
 </script>

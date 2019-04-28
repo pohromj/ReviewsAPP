@@ -1,0 +1,483 @@
+﻿
+@{
+    ViewData["Title"] = "TemplateDetail";
+}
+
+<center><h2>TemplateDetail</h2></center>
+<div id="accordion">
+    <div class="card">
+        <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Tameplate name
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+
+            <div class="card-body">
+                <table>
+                    <tr><td>Tameplate name:</td><td><input type="text" id="templateName" class="form-control"></td></tr>
+                    <tr><td>Tameplate description:</td><td><textarea id="templateDescription" class="form-control" style="resize:both;"></textarea></td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="headingOneAndHalf">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOneAndHalf" aria-expanded="true" aria-controls="collapseOneandHalf">
+                    Review roles
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapseOneAndHalf" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+
+            <div class="card-body">
+                <form id="roleForm">
+                    <table id="roleTable"></table>
+                </form>
+                <button type="button" onclick="addRowToRoleTable();" class="btn btn-primary btn-sm">Add role</button>
+
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="headingTwo">
+            <h5 class="mb-0">
+                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Review Header
+                </button>
+            </h5>
+        </div>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <table class="table table-sm">
+                            <tbody>
+                                <tr><td>Project name: </td><td>name</td></tr>
+                                <tr><td>Work Product name: </td><td>name</td></tr>
+                                <tr><td>Reviewers: </td><td>a</td></tr>
+                                <tr><td>Date: </td><td>a</td></tr>
+                            </tbody>
+                            <tbody id="CustomValue"></tbody>
+                        </table>
+                        <button class="btn btn-primary btn-sm" onclick="showSpecificationOfRow();">Add atribute</button>
+
+                    </div>
+                    <div class="col">
+                        <table id="headerSpecification" style="visibility: hidden;">
+                            <tr><td>Atribut name: </td><td><input type="text" id="CustomValueName"></td></tr>
+                            <tr>
+                                <td>Function: </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="exampleRadios" id="noneRadio" value="none" checked onchange="removeColumns();">
+                                        <label class="form-check-label" for="exampleRadios1">
+                                            None
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="sum" onchange="showColumns();">
+                                        <label class="form-check-label" for="exampleRadios2">
+                                            Sum
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tbody id="Columns"></tbody>
+                            <tbody>
+                                <tr>
+                                    <td><button type="button" onclick="appendToHeaderTable();" class="btn btn-primary btn-sm" id="saveButton">Add</button></td>
+                                    <td><button type="button" onclick="hideSpecificationOfRow();" class="btn btn-secondary btn-sm">Close</button></td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" id="headingThree">
+            <h5 class="mb-0">
+                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    Review body
+                </button>
+            </h5>
+        </div>
+        <div id="collapseThree" class="collapse" aria-labelledby="headingThree">
+            <div class="card-body">
+
+                Column type:
+                <select id="columnType" onchange="showSetupWindow();" class="selectpicker">
+                    <option value="text">Text</option>
+                    <option value="opt">Option</option>
+                </select>
+                <div>
+                    <table>
+                        <tr><td>Column name: </td><td><input type="text" id="columnThName" class="form-control"></td></tr>
+                    </table>
+                    <div id="setupWindow" style="visibility: hidden;">
+                        <form id="optionForm">
+                            <table id="optionSetup"></table>
+                        </form>
+                        <input type="button" onclick="createInputText();" value="Add Enum" class="btn btn-primary btn-sm">
+                    </div>
+                </div>
+
+                <input type="button" value="add column" onclick="addColumn();" class="btn btn-primary btn-sm" id="addColumnBtn">
+                <input type="button" value="clear" onclick="removeElement();" class="btn btn-secondary btn-sm">
+
+                <br>
+                <div style="overflow: scroll; overflow-x:auto; overflow-y:hidden;">
+                    <table border="1" id="workSpaceTable">
+                        <tr id="firstTableRow"></tr>
+                    </table>
+                </div>
+                <br>
+                <br>
+                <input type="button" value="Save" onclick="putReviewTameplate(@ViewBag.TemplateId);" class="btn btn-primary btn-sm">
+            </div>
+        </div>
+    </div>
+</div>
+<button hidden="hidden" onclick="prepareReview(@ViewBag.TemplateId)" id="prepare"></button>
+<script>
+    $(document).ready(function () {
+        $("#prepare").click();
+    });
+
+    function prepareReview(id) {
+        var template = getTameplate(id);
+        prepareTemplateName(template.name, template.description);
+        prepareRoles(template.roles);
+        prepareHeader(template.header);
+        prepareColumns(template.columns);
+    }
+    function getTameplate(id) {
+        console.log("get template fnc");
+        var tameplate;
+        $.ajax({
+            type: 'GET',
+            async: false,
+            url: "/Template/GetTemplate?id=" + id, // http://localhost:60000/api/upload/ -- na tuto URL se budou posilat diagramy (XML)
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                if (result !== null) {
+                    //console.log(result);
+                    //nodes = JSON.parse(result);
+                    console.log(result);
+                    tameplate = result;
+
+                } else {
+                    //document.getElementById("result").innerHTML = "NULL";
+                    alert("KO");
+                }
+            }
+        });
+        return tameplate;
+    }
+    function prepareTemplateName(name, description) {
+        var tmpname = document.getElementById('templateName');
+        var tmpdesc = document.getElementById('templateDescription');
+        tmpname.value = name;
+        if (typeof description !== undefined)
+         tmpdesc.value = description;
+        
+    }
+    function prepareRoles(roles) {
+        for (var i = 0; i < roles.length; i++) {
+            prepareAddRowToRoleTable(roles[i].name, roles[i].id);
+        }
+
+    }
+    function prepareAddRowToRoleTable(name, id) {
+        var table = document.getElementById('roleTable');
+        var row = document.createElement('tr');
+        var input = document.createElement('input');
+        var td = document.createElement('td');
+        input.type = "text";
+        input.setAttribute('class', 'form-control');
+        input.value = name;
+        input.setAttribute('data-id', id);
+        var roleName = document.createTextNode('Role name: ');
+        td.appendChild(roleName);
+        var td1 = document.createElement('td');
+        td1.appendChild(input);
+        var btn = document.createElement('button');
+        var removeText = document.createTextNode('Remove');
+
+        btn.appendChild(removeText);
+        btn.setAttribute('onclick', 'removeRole(this);');
+        btn.setAttribute('class', 'btn btn-primary btn-sm');
+        var td2 = document.createElement('td');
+        td2.appendChild(btn);
+        row.appendChild(td);
+        row.appendChild(td1);
+        row.appendChild(td2);
+        table.appendChild(row);
+    }
+    function prepareHeader(header) {
+        for (var i = 0; i < header.length; i++) {
+            console.log(header[i]);
+            prepareAppendToHeaderTable(header[i].id,header[i].fcn, header[i].name, header[i].columnName, header[i].parameter);
+        }
+
+    }
+    function prepareAppendToHeaderTable(id,fnc, name, specificColumnValue, specificColumnEnumValue) {
+        console.log(fnc);
+        var table = document.getElementById('CustomValue');
+        var tr = document.createElement('tr');
+        var td = document.createElement('td');
+        var atributName = name; //document.getElementById('CustomValueName').value;
+        var text = document.createTextNode(atributName);
+        td.appendChild(text);
+        var td1 = document.createElement('td');
+        td1.setAttribute('data-id', id);
+        var td2 = document.createElement('td');
+        var btn = document.createElement('button');
+        //var btnName = document.createTextNode('Delete');
+        var rmv = document.createTextNode('Remove');
+        btn.appendChild(rmv);
+        btn.setAttribute('onclick', 'removeRowFromHeaderTable(this);');
+        btn.setAttribute('class', 'btn btn-primary btn-sm');
+        td2.appendChild(btn);
+        if (fnc === null) {
+            var inp = document.createElement('input');
+            inp.type = 'text';
+            td1.appendChild(inp);
+            //createHeaderElement(atributName, null, null);
+        }
+        else {
+            td1.innerHTML = "<span id=\"fnc\">sum</span> for column: <span id=\"columnName\">" + specificColumnValue + "</span> option: <span id=\"opt\">" + specificColumnEnumValue + "</span>";
+        }
+        tr.appendChild(td);
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+        table.appendChild(tr);
+    }
+
+    function prepareColumns(columns) {
+        for (var i = 0; i < columns.length; i++) {
+            prepareAddColumn(columns[i].id,columns[i].columnName, columns[i].type, columns[i].option);
+        }
+    }
+    function prepareAddColumn(id, name, type, optionValue) {
+     
+            var tab = document.getElementById('firstTableRow');
+        var th = document.createElement('th');
+        th.setAttribute('data-id', id);
+            var text = document.createTextNode(name);
+            var deleteButton = document.createElement('button');
+            var spn = document.createElement('span');
+            var x = document.createTextNode('x');
+            spn.appendChild(x);
+            deleteButton.appendChild(spn);
+            deleteButton.type = 'button';
+            deleteButton.setAttribute('class', 'close');
+            deleteButton.setAttribute('onclick', 'removeColumnFromTable(this)');
+            th.setAttribute('ondblclick', 'restoreOptionData(this)');
+            th.appendChild(text);
+            th.appendChild(deleteButton);
+            tab.appendChild(th);
+            //var btn = document.getElementById('addColumnBtn');
+        //btn.value = "Add column";
+        prepareCreateRowTypeInTabel(type, optionValue);
+
+            //columnName.value = "";
+            //optionValues = [];
+            //console.log(formElements);
+        
+
+    }
+    function prepareCreateRowTypeInTabel(type, optionValue) {
+        console.log(type);
+        var tableColumnsCount = document.getElementById('workSpaceTable').rows.length;
+        //console.log(tableColumnsCount);
+        if (tableColumnsCount === 1) {
+            //var text = document.createTextNode('text in td');
+            var text = prepareGetElementType(type, optionValue);
+            console.log(text);
+            var table = document.getElementById('workSpaceTable');
+            var row = document.createElement('tr');
+            var td = document.createElement('td');
+            td.appendChild(text);
+
+            row.appendChild(td);
+            table.appendChild(row);
+
+            //removeElement();
+        }
+        else {
+            var table = document.getElementById('workSpaceTable').rows[1];
+            //var text = document.createTextNode('text in td');
+            var text = prepareGetElementType(type, optionValue);
+            var td = document.createElement('td');
+            td.appendChild(text);
+            table.appendChild(td);
+        }
+
+    }
+    function prepareGetElementType(type,optionValue) {
+        /*var e = document.getElementById('columnType');
+        var type = e.options[e.selectedIndex].value;*/
+        if (type === 'select') {
+            var select = document.createElement('select');
+            select.setAttribute('class', 'form-control')
+            //var optionValue = getValuesFromOptionSetup();
+            for (var i = 0; i < optionValue.length; i++) {
+                var options = document.createElement('option');
+                options.value = optionValue[i];
+                options.text = optionValue[i];
+                select.appendChild(options);
+                //optionValues.push(optionValue[i]);
+            }
+            //removeElement();
+
+            return select;
+        }
+        else if (type === 'textarea') {
+            var area = document.createElement('textarea');
+            area.setAttribute('class', 'form-control');
+            area.style = "resize: both;"
+            //removeElement();
+            return area;
+        }
+    }
+    function putReviewTameplate(id) {
+        var name = document.getElementById('templateName').value;
+        var description = document.getElementById('templateDescription').value;
+        var formElements = putReviewFormValues();
+        var roles = putAllRoles();
+        var headers = putAllCustomRows();
+        var data = JSON.stringify({ Columns: formElements, Name: name,Id : id, Description: description, roles: roles, header: headers });
+        console.log(data);
+        $.ajax({
+            type: 'PUT',
+            url: "http://localhost:49727/Template/UpdateTemplate", // http://localhost:60000/api/upload/ -- na tuto URL se budou posilat diagramy (XML)
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            data: data,
+            success: function (result) {
+                if (result !== null) {
+                    // document.getElementById("result").innerHTML = JSON.stringify(result);
+                    alert(result.result);
+                } else {
+                    //document.getElementById("result").innerHTML = "NULL";
+                    alert("KO");
+
+                }
+            }
+        });
+    }
+    function putAllRoles() {
+        var inputs = document.getElementById('roleTable').getElementsByTagName('input');
+        var roles = [];
+        for (var i = 0; i < inputs.length; i++) {
+            var o = new Object();
+            o.Name = inputs[i].value;
+            o.Id = inputs[i].getAttribute('data-id');
+            roles.push(o);
+        }
+        return roles;
+    }
+    function putReviewFormValues() {
+        var table = document.getElementById('workSpaceTable');
+        console.log('tabulka');
+        console.log(table);
+        var formElements = [];
+        for (var i = 0; i < table.rows[0].cells.length; i++) {
+            var element = putgetColumn(table, i);
+            formElements.push(element);
+        }
+        return formElements;
+    }
+    function putgetColumn(table, index) {
+        console.log(table.rows[0].cells[index]);
+        var headerCellName = table.rows[0].cells[index].textContent;
+        var id = table.rows[0].cells[index].getAttribute('data-id');
+        headerCellName = headerCellName.substr(0, headerCellName.length - 1);
+        var contentCell = table.rows[1].cells[index];
+        var select = contentCell.getElementsByTagName('select');
+        //if select length is equal 0 than the cell contains textarea
+        if (select.length === 0)
+            return putcreateColumnObjectForSavingToDatabase(id, headerCellName, 'textarea', null);
+        else {
+            var optionValues = getOptionElements(select[0]);
+            return putcreateColumnObjectForSavingToDatabase(id,headerCellName, 'select', optionValues);
+        }
+
+    }
+    function getOptionElements(select) {
+        var optionValues = [];
+        for (var i = 0; i < select.length; i++) {
+            var optvalue = select.options[i].value;
+            optionValues.push(optvalue);
+        }
+        return optionValues;
+    }
+    function putcreateColumnObjectForSavingToDatabase(id,headrName, valueType, optionType) {
+        var obj = new Object();
+        obj.ColumnName = headrName;
+        obj.Type = valueType;
+        obj.id = id;
+        if (optionType !== null) {
+            obj.Option = optionType;
+        }
+        //formElements.push(obj);
+        return obj;
+    }
+    function putAllCustomRows() {
+        var headeElements = [];
+        var table = document.getElementById('CustomValue');
+        for (var i = 0; i < table.rows.length; i++) {
+            var columnName = table.rows[i].cells[0].innerText;
+            var rowType = table.rows[i].cells[1].getElementsByTagName('input');
+            var id = table.rows[i].cells[1].getAttribute('data-id');
+            if (rowType.length > 0) {
+                
+                var element = putcreateHeaderElement(id,columnName, null, null, null);
+                headeElements.push(element);
+            }
+            else {
+                var tmp = table.rows[i].cells[1].getElementsByTagName('span');
+                console.log("test fnc");
+                console.log(tmp);
+                /*
+                var fnc = document.getElementById('fnc').innerText;
+                var parameter = document.getElementById('opt').innerText;
+                var column = document.getElementById('columnName').innerText;*/
+                var fnc = tmp.fnc.innerText;
+                var parameter = tmp.opt.innerText;
+                var column = tmp.columnName.innerText;
+                var element = putcreateHeaderElement(id,columnName, fnc, parameter, column);
+                headeElements.push(element);
+            }
+        }
+        return headeElements;
+    }
+    function putcreateHeaderElement(id,name, fcn, parameter, columnName) {
+        var element = new Object();
+        element.name = name;
+        element.id = id;
+        if (fcn !== null) {
+            element.fcn = fcn;
+            element.parameter = parameter;
+            console.log(columnName);
+            element.columnName = columnName;
+        }
+        //headerElements.push(element);
+        return element;
+    }
+
+
+</script>
+<script src="~/js/main.js"></script>

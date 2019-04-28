@@ -3,17 +3,22 @@
     ViewData["Title"] = "ReviewsForArtifact";
 }
 
-<h2>Reviews For Artifact</h2>
-<table class="table">
-    <tr><td>Artifact ID </td><td>@ViewBag.Artifact.Artifact.Id</td></tr>
-    <tr><td>IBM ID </td><td>@ViewBag.Artifact.Artifact.IbmId</td></tr>
-    <tr><td>NAME </td><td><a href="@ViewBag.Artifact.Artifact.Url">@ViewBag.Artifact.Artifact.Name</a></td></tr>
-</table>
 
+<div class="row">
+    <div class="col">
+        <table class="table">
+            <tr><td>Artifact ID </td><td>@ViewBag.Artifact.Artifact.Id</td></tr>
+            <tr><td>IBM ID </td><td>@ViewBag.Artifact.Artifact.IbmId</td></tr>
+            <tr><td>NAME </td><td><a href="@ViewBag.Artifact.Artifact.Url">@ViewBag.Artifact.Artifact.Name</a></td></tr>
+        </table>
+    </div>
+    <div class="col"></div>
+</div>
+<center><h2>Reviews For Artifact</h2></center>
 <table id="Reviews", class="display cell-border nowrap" style="width: 100%">
     <thead><tr><th>Review</th></tr></thead>
     <tbody>
-        @foreach(var r in ViewBag.Reviews)
+        @foreach(var r in @ViewBag.Artifact.Reviews)
         {
             <tr><td><a href="@Url.Action("GetReview","Review",new { id = @r.Id})">@r.Name</a></td></tr>
         }

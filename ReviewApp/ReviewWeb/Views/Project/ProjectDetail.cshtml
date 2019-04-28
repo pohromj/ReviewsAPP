@@ -4,14 +4,29 @@
 }
 
 <h2>ProjectDetail</h2>
-<table>
-    <tr><td>Project name:</td><td>@ViewBag.Project.ProjectModel.Name</td></tr>
-    <tr><td>Description:</td><td>@ViewBag.Project.ProjectModel.Description</td></tr>
-</table>
-<br />
-Work products<br />
+<div class="row">
 
-<table>
+
+    <div class="col">
+        <table>
+            <tr><td>Project name:</td><td>@ViewBag.Project.ProjectModel.Name</td></tr>
+            <tr><td>Description:</td><td>@ViewBag.Project.ProjectModel.Description</td></tr>
+        </table>
+    </div>
+    <div class="col">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Add work product</button>
+        <a class="btn btn-primary" href="@Url.Action("SpecificArtifacts","Artifact", new { projectId = @ViewBag.Project.ProjectModel.Id})">Add artifacts</a>
+        <a class="btn btn-primary" href="@Url.Action("GetAllUsersForProject","User", new { projectId = @ViewBag.Project.ProjectModel.Id })">Show Participants</a>
+        <a class="btn btn-primary" href="@Url.Action("ReviewCreator","Review", new { projectID = @ViewBag.Project.ProjectModel.Id })">Start review</a>
+        <a class="btn btn-danger" href="@Url.Action("DeleteProject","Project", new { id = @ViewBag.Project.ProjectModel.Id })">Delete project</a>
+    </div>
+</div>
+<br />
+<h3>Work products</h3>
+<br />
+
+<table id="workProducts" class="display cell-border nowrap" style="width: 100%">
+    <thead><tr><th>Work Product Names</th></tr></thead>
     @foreach (var wk in ViewBag.Project.WorkproductModel)
     {
         <tr><td><a href="@Url.Action("GetWorkProductDetail","Project", new { id = wk.Id})">@wk.Name</a></td></tr>
@@ -21,10 +36,8 @@ Work products<br />
 
 <div class="container">
     <!-- Trigger the modal with a button -->
-    <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Add work product</button>
-    <a href="@Url.Action("SpecificArtifacts","Artifact", new { projectId = @ViewBag.Project.ProjectModel.Id})">Add artifacts</a>
-    <a href="@Url.Action("GetAllUsersForProject","User", new { projectId = @ViewBag.Project.ProjectModel.Id })" class="btn">Show Participants</a>
-    <a href="@Url.Action("ReviewCreator","Review", new { projectID = @ViewBag.Project.ProjectModel.Id, workproductId = 2 })">Start review</a>
+    
+    
     <!-- Modal -->
     <div class="modal fade" id="myModal" role="dialog">
         <div class="modal-dialog">
@@ -57,3 +70,11 @@ Work products<br />
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        tbl = $('#workProducts').DataTable(
+            {
+                paging: true,
+            });
+    });
+</script>
