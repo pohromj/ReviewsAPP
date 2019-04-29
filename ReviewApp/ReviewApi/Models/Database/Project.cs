@@ -7,6 +7,7 @@ namespace ReviewApi.Models.Database
     {
         public Project()
         {
+            TaskPlan = new HashSet<TaskPlan>();
             UserProject = new HashSet<UserProject>();
             Workproduct = new HashSet<Workproduct>();
         }
@@ -19,6 +20,7 @@ namespace ReviewApi.Models.Database
 
         public virtual ProjectType ProjectType { get; set; }
         public virtual Users UsersEmailNavigation { get; set; }
+        public virtual ICollection<TaskPlan> TaskPlan { get; set; }
         public virtual ICollection<UserProject> UserProject { get; set; }
         public virtual ICollection<Workproduct> Workproduct { get; set; }
     }

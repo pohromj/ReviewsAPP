@@ -16,5 +16,6 @@ namespace ReviewWeb.Models.ReviewModels
         public int Tameplate { get; set; }
         public int Project { get; set; }
         public string Html { get; set; }
+        public bool IsEmpty { get; set; }
     }
 }

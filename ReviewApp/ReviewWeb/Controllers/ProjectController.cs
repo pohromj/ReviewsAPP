@@ -83,21 +83,23 @@ namespace ReviewWeb.Controllers
                 ViewBag.Project = project;
                 //HttpResponseMessage msg = await client.GetAsync("http://localhost:55188/api/Artifact/GetAllArtifactForProject?id=" + projectId);
                 //HttpResponseMessage msg = await client.GetAsync("http://localhost:55188/api/Artifact/GetArtifactsPerPage?projectId=" + projectId + "&&page=" + 0);
-/*
-                var artifacts = JsonConvert.DeserializeObject<List<ArtifactViewModel>>(await msg.Content.ReadAsStringAsync());
-                HttpResponseMessage msg2 = await client.GetAsync("http://localhost:55188/api/Artifact/NumberOfArtifactsInProject?projectId=" + projectId);
-                int numberOfArtifact = JsonConvert.DeserializeObject<int>(await msg2.Content.ReadAsStringAsync());
-                if (artifacts != null)
-                {*/
-               /*     ViewBag.NumberOfPage = numberOfArtifact / 15;
-                    ViewBag.Artifacts = artifacts;
-                    ViewBag.ActivePage = 0;
-                    /*
-                    var propertyList = artifacts[0].ArtifactProperties.Keys.ToList();
-                    propertyList.Sort();
-                    ViewBag.propertyList = propertyList;*/
-              //  }*/
-
+                /*
+                                var artifacts = JsonConvert.DeserializeObject<List<ArtifactViewModel>>(await msg.Content.ReadAsStringAsync());
+                                HttpResponseMessage msg2 = await client.GetAsync("http://localhost:55188/api/Artifact/NumberOfArtifactsInProject?projectId=" + projectId);
+                                int numberOfArtifact = JsonConvert.DeserializeObject<int>(await msg2.Content.ReadAsStringAsync());
+                                if (artifacts != null)
+                                {*/
+                /*     ViewBag.NumberOfPage = numberOfArtifact / 15;
+                     ViewBag.Artifacts = artifacts;
+                     ViewBag.ActivePage = 0;
+                     /*
+                     var propertyList = artifacts[0].ArtifactProperties.Keys.ToList();
+                     propertyList.Sort();
+                     ViewBag.propertyList = propertyList;*/
+                //  }*/
+                HttpResponseMessage tskmsg = await client.GetAsync("http://localhost:55188/api/Project/GetTasks?projectId=" + projectId);
+                List<TaskModel> tasks = JsonConvert.DeserializeObject<List<TaskModel>>(await tskmsg.Content.ReadAsStringAsync());
+                ViewBag.Tasks = tasks;
 
             }
             return View("ProjectDetail");
@@ -130,17 +132,7 @@ namespace ReviewWeb.Controllers
                 //HttpResponseMessage msg = await client.GetAsync("http://localhost:55188/api/Artifact/GetArtifactsPerPage?workProductId=" + id + "&&page=" + 0);
                 var artifacts = JsonConvert.DeserializeObject<List<JazzArtifact>>(await msg.Content.ReadAsStringAsync());
                 ViewBag.Artifacts = artifacts;
-                /*HttpResponseMessage msg2 = await client.GetAsync("http://localhost:55188/api/Artifact/NumberOfArtifactsInWorkProduct?workProductId=" + id);
-                int numberOfArtifact = JsonConvert.DeserializeObject<int>(await msg2.Content.ReadAsStringAsync());
-                if (artifacts != null)
-                {
-                    if(numberOfArtifact % 15 > 0)
-                        ViewBag.NumberOfPage = numberOfArtifact / 15 + 1;
-                    else
-                        ViewBag.NumberOfPage = numberOfArtifact / 15;
-                    ViewBag.Artifacts = artifacts;
-                    ViewBag.ActivePage = 0;
-                }*/
+               
                 return View("WorkProductDetail");
             }
             
@@ -175,6 +167,23 @@ namespace ReviewWeb.Controllers
                 HttpResponseMessage message = await client.DeleteAsync("http://localhost:55188/api/Project/DeleteWorkProduct?id=" + id);
                 return RedirectToAction("ProjectDetail", "Project", new { projectId = projectid });
             }
+        }
+        [HttpPost]
+        public async Task<IActionResult>GetTasksFromIBM(IbmUrlViewModel model)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                string json = JsonConvert.SerializeObject(model);
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
+                HttpResponseMessage message = await client.PostAsync("http://localhost:55188/api/Project/GetTasksFromIBM", new StringContent(json, Encoding.UTF8, "application/json"));
+                return RedirectToAction("ProjectDetail", "Project", new { projectId = model.ProjectId });
+            }
+        }
+        [Route("TaskPlanning")]
+        public IActionResult TaskPlanning(int id)
+        {
+            ViewBag.ProjectId = id;
+            return View("~/Views/Project/PlanedTask.cshtml");
         }
 
     }

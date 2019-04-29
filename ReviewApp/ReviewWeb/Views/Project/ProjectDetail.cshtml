@@ -8,7 +8,7 @@
 
 
     <div class="col">
-        <table>
+        <table class="table">
             <tr><td>Project name:</td><td>@ViewBag.Project.ProjectModel.Name</td></tr>
             <tr><td>Description:</td><td>@ViewBag.Project.ProjectModel.Description</td></tr>
         </table>
@@ -21,6 +21,7 @@
                         <button title="Add work product" type="button" class="btn btn-dark" data-toggle="modal" data-target="#myModal"><i class="fas fa-briefcase"></i></button>
                         <a title="Show Participants" class="btn btn-dark" href="@Url.Action("GetAllUsersForProject","User", new { projectId = @ViewBag.Project.ProjectModel.Id })"><i class="fas fa-users"></i></a>
                         <a title="Start review" class="btn btn-dark" href="@Url.Action("ReviewCreator","Review", new { projectID = @ViewBag.Project.ProjectModel.Id })"><i class="fas fas fa-tasks"></i></a>
+                        <a title="Download Tasks" class="btn btn btn-dark" href="@Url.Action("TaskPlanning","Project", new { id = @ViewBag.Project.ProjectModel.Id})"><i class="fas fa-ruler"></i></a>
                     </div>
                     <div class="btn-group" style="margin-left: 4px;">
                         <a title="Delete project" class="btn btn-danger" href="@Url.Action("DeleteProject","Project", new { id = @ViewBag.Project.ProjectModel.Id })"><i class="fas fa-trash-alt"></i></a>
@@ -34,7 +35,24 @@
                 
             </div>
 </div>
-    
+<div class="row">
+    <div class="col">
+        <h4>IBM tasks</h4>
+        <table class="table table-sm">
+            <thead><tr><th>#</th><th>Name</th><th>Typ</th></tr></thead>
+            @foreach (var t in ViewBag.Tasks)
+            {
+                <tr><td>@t.Id</td><td><a href="@t.Url" target="_blank">@t.Name</a></td><td>@t.Type</td></tr>
+            }
+        </table>
+    </div>
+    <div class="col">
+
+    </div>
+    <div class="col">
+
+    </div>
+</div>   
         <br />
         <h3>Work products</h3>
         <br />

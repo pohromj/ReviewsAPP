@@ -30,6 +30,7 @@ namespace ReviewApi.Models.Database
         public virtual DbSet<ReviewRole> ReviewRole { get; set; }
         public virtual DbSet<ReviewTameplate> ReviewTameplate { get; set; }
         public virtual DbSet<SystemRole> SystemRole { get; set; }
+        public virtual DbSet<TaskPlan> TaskPlan { get; set; }
         public virtual DbSet<UserProject> UserProject { get; set; }
         public virtual DbSet<UserReviewRole> UserReviewRole { get; set; }
         public virtual DbSet<Users> Users { get; set; }
@@ -39,8 +40,8 @@ namespace ReviewApi.Models.Database
         {
             if (!optionsBuilder.IsConfigured)
             {
-/*#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=reviewDatabase;Trusted_Connection=True;");*/
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=completeDB;Trusted_Connection=True;");
             }
         }
 
@@ -469,6 +470,38 @@ namespace ReviewApi.Models.Database
                     .HasColumnName("name")
                     .HasMaxLength(30)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TaskPlan>(entity =>
+            {
+                entity.ToTable("Task_plan");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.IbmId).HasColumnName("ibm_id");
+
+                entity.Property(e => e.Name)
+                    .HasColumnName("name")
+                    .HasMaxLength(256)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ProjectId).HasColumnName("Project_id");
+
+                entity.Property(e => e.Type)
+                    .HasColumnName("type")
+                    .HasMaxLength(256)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Url)
+                    .IsRequired()
+                    .HasColumnName("url")
+                    .HasColumnType("text");
+
+                entity.HasOne(d => d.Project)
+                    .WithMany(p => p.TaskPlan)
+                    .HasForeignKey(d => d.ProjectId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("Project_FK");
             });
 
             modelBuilder.Entity<UserProject>(entity =>

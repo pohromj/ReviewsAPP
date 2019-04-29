@@ -11,6 +11,8 @@ using ReviewApi.Models.Project;
 using ReviewApi.Models.User;
 using ReviewApi.Models.Artifact;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
+using ReviewApi.BusinessLogic;
 
 namespace ReviewApi.Controllers
 {
@@ -227,6 +229,49 @@ namespace ReviewApi.Controllers
             context.Workproduct.Remove(workproducts);
             context.SaveChanges();
             return Ok();
+        }
+        [HttpPost]
+        [Route("GetTasksFromIBM")]
+        public IActionResult GetTasksFromIBM([FromBody] IbmUrlModel model)
+        {
+            string xml;
+            List<TaskModel> nodesInXml = null;
+            using (WebClient client = new WebClient())
+            {
+                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                String username = model.Name;
+                String password = model.Password;
+                String encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(username + ":" + password));
+                client.Headers.Add("Authorization", "Basic " + encoded);
+                xml = client.DownloadString(model.Url);
+                nodesInXml = XmlParser.CreateTaskObjects(xml);
+                SaveToDatabase(nodesInXml, model.ProjectId);
+                return Ok();
+            }
+        }
+        private void SaveToDatabase(List<TaskModel> tasks, int projectId)
+        {
+            Project p = context.Project.Where(x => x.Id == projectId).FirstOrDefault();
+            foreach(var t in tasks)
+            {
+                TaskPlan plan = new TaskPlan() { Name = t.Name, IbmId = t.IbmId, Type = t.Type, Url = t.Url };
+                p.TaskPlan.Add(plan);
+            }
+            context.SaveChanges();
+            
+        }
+        [HttpGet]
+        [Route("GetTasks")]
+        public List<TaskModel> GetTasks(int projectId)
+        {
+            var tasks = context.TaskPlan.Where(x => x.ProjectId == projectId).ToList();
+            List<TaskModel> tasksForProject = new List<TaskModel>();
+            foreach(var t in tasks)
+            {
+                TaskModel model = new TaskModel() { IbmId = t.IbmId, Id = t.Id, Name = t.Name, Type = t.Type, Url = t.Url };
+                tasksForProject.Add(model);
+            }
+            return tasksForProject;
         }
     }
 }

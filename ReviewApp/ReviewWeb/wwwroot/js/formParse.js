@@ -115,8 +115,18 @@ function createForm() {
             parrent.appendChild(s);
         }
     }
-    createSelectForColumnData(id);
-    createArtifactTable(id);
+    var empty = document.getElementById('reviewData');
+    var tb = document.getElementById('ArtifactTable').getElementsByTagName('tbody');
+    allArtifacts.destroy();
+    deleteRowsFromTable(tb[0]);
+    allArtifacts = $('#ArtifactTable').DataTable({ paging: true, "scrollX": true, destroy: true });
+    var tble = document.getElementById('dataColumns');
+    deleteRowsFromTable(tble);
+    if (empty.checked !== true) {
+        createSelectForColumnData(id);
+        createArtifactTable(id);
+    }
+    
     //getArtifacts(id);
 }
 function createReviewForm(data) {

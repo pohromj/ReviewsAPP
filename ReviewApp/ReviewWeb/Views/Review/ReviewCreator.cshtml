@@ -48,10 +48,15 @@
                             </div>
                             <div class="form-group">
                                 <label asp-for="WorkProduct" class="control-label"></label>
-                                <select asp-for="WorkProduct" asp-items="@ViewBag.WorkProducts" class="form-control" id="workProduct"></select>
+                                <select asp-for="WorkProduct" asp-items="@ViewBag.WorkProducts" class="form-control" id="workProduct" onchange="createForm();"></select>
                                 <!--<input asp-for="WorkProduct" class="form-control" />-->
                                 <span asp-validation-for="WorkProduct" class="text-danger"></span>
                                 <input asp-for="ProjectId" hidden value="@ViewBag.projectId" id="projectId" />
+                            </div>
+                            <div class="form-check">
+
+                                <input type="checkbox" id="reviewData" onchange="createForm();" class="form-check-input" />
+                                <label for="reviewData" class="form-check-label">Empty form</label>
                             </div>
                             <div class="form-group">
                                 <label asp-for="Tameplate" class="control-label"></label>
@@ -255,6 +260,12 @@
                 if (tmplt.length > 0)
                     reviewSetup.tameplate = tmplt.options[tmplt.selectedIndex].value;
                 reviewSetup.project = document.getElementById('projectId').value;
+                var checkbox = document.getElementById('reviewData');
+                if (checkbox.checked === true)
+                    reviewSetup.IsEmpty = true;
+                else {
+                    reviewSetup.IsEmpty = false;
+                }
                 return reviewSetup;
             }
            

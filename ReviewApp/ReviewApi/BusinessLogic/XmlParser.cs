@@ -1,4 +1,5 @@
 ﻿using ReviewApi.Models.Artifact;
+using ReviewApi.Models.Project;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,6 +62,29 @@ namespace ReviewApi.BusinessLogic
                 artifacts.Add(a);
             }
             return artifacts;
+        }
+        public static List<TaskModel>CreateTaskObjects(string xml)
+        {
+            List<TaskModel> tasks = new List<TaskModel>();
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(xml);
+            foreach (XmlNode node in doc.DocumentElement)
+            {
+                TaskModel a = new TaskModel();
+                foreach (XmlNode child in node.ChildNodes)
+                {
+                    if (child.Name == "REFERENCE_ID")
+                        a.IbmId = Convert.ToInt32(child.InnerText);
+                    else if (child.Name == "URL1_title")
+                        a.Name = child.InnerText;
+                    else if (child.Name == "URL1")
+                        a.Url = child.InnerText;
+                    else if (child.Name == "REQUEST_TYPE")
+                        a.Type = child.InnerText;
+                }
+                tasks.Add(a);
+            }
+            return tasks;
         }
     }
 }
