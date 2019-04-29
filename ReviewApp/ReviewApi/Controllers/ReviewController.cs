@@ -88,7 +88,8 @@ namespace ReviewApi.Controllers
             review.Setup = setup;
             review.Participant = GetParticipants(id);
             List<Header> headers = new List<Header>();
-            List<HeaderRow> rows = context.HeaderRow.Where(x => x.ReviewTameplateId == r.ReviewTameplateId).ToList();
+            List<int> ids = context.HeaderRowData.Where(x => x.ReviewId == r.Id).Select(x => x.HeaderRowId).ToList();
+            List<HeaderRow> rows = context.HeaderRow.Where(x => x.ReviewTameplateId == r.ReviewTameplateId && ids.Contains(x.Id)).ToList();
             for (int i = 0; i < rows.Count; i++)
             {
                 string name = context.ReviewColumn.Where(x => x.Id == rows[i].ReviewColumnId).Select(a => a.Name).FirstOrDefault();

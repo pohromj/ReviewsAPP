@@ -8,7 +8,6 @@ namespace ReviewApi.Models.Database
     {
         public ReviewsDatabaseContext()
         {
-            
         }
 
         public ReviewsDatabaseContext(DbContextOptions<ReviewsDatabaseContext> options)
@@ -38,14 +37,13 @@ namespace ReviewApi.Models.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            
             if (!optionsBuilder.IsConfigured)
             {
 /*#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=reviewDatabase;Trusted_Connection=True;");*/
             }
         }
-        
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
@@ -149,6 +147,8 @@ namespace ReviewApi.Models.Database
                 entity.ToTable("Header_Row");
 
                 entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Deleted).HasColumnName("deleted");
 
                 entity.Property(e => e.Function)
                     .HasColumnName("function")
@@ -268,7 +268,7 @@ namespace ReviewApi.Models.Database
                     .HasForeignKey(d => d.ReviewId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ASS_27");
-                
+
                 entity.HasOne(d => d.IbmArtifactI)
                     .WithMany(p => p.IbmArtifactReview)
                     .HasForeignKey(d => new { d.IbmArtifactId, d.IbmArtifactIbmId })
@@ -366,6 +366,8 @@ namespace ReviewApi.Models.Database
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
+                entity.Property(e => e.Deleted).HasColumnName("deleted");
+
                 entity.Property(e => e.Description).HasColumnType("text");
 
                 entity.Property(e => e.Name)
@@ -413,6 +415,8 @@ namespace ReviewApi.Models.Database
                 entity.ToTable("Review_role");
 
                 entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Deleted).HasColumnName("deleted");
 
                 entity.Property(e => e.Name)
                     .IsRequired()

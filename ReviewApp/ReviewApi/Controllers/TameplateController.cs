@@ -91,7 +91,7 @@ namespace ReviewApi.Controllers
                 tameplate.Id = tmp.Id;
                 tameplate.Name = tmp.Name;
                 tameplate.Descritpion = tmp.Description;
-                var roles = context.ReviewRole.Where(r => r.ReviewTameplateId == id).ToList();
+                var roles = context.ReviewRole.Where(r => r.ReviewTameplateId == id && r.Deleted != true).ToList();
                 List<Role> roleList = new List<Role>();
                 foreach (var r in roles)
                 {
@@ -99,15 +99,16 @@ namespace ReviewApi.Controllers
                     roleList.Add(role);
                 }
                 tameplate.Roles = roleList;
-                var header = context.HeaderRow.Where(h => h.ReviewTameplateId == tmp.Id).ToList();
+                var header = context.HeaderRow.Where(h => h.ReviewTameplateId == tmp.Id && h.Deleted != true).ToList();
                 List<Header> headers = new List<Header>();
                 foreach (var head in header)
                 {
                     if (head.ReviewColumnId != null)
                     {
                         ReviewColumn c = context.ReviewColumn.Where(x => x.Id == head.ReviewColumnId).FirstOrDefault();
-                        Header h = new Header() { Fcn = head.Function, Name = head.Name, Parameter = head.Parameter, ColumnName = c.Name, Id = head.Id };
+                        Header h = new Header() { Fcn = head.Function, Name = head.Name, Parameter = head.Parameter, ColumnName = c.Name, Id = head.Id, ColumnId = head.ReviewColumnId };
                         headers.Add(h);
+                        
                     }
                     else
                     {
@@ -117,7 +118,7 @@ namespace ReviewApi.Controllers
                 }
                 tameplate.Header = headers;
                 List<Column> columns = new List<Column>();
-                var cols = context.ReviewColumn.Where(c => c.ReviewTameplateId == tmp.Id).ToList();
+                var cols = context.ReviewColumn.Where(c => c.ReviewTameplateId == tmp.Id && c.Deleted != true).ToList();
                 foreach (var c in cols)
                 {
                     Column col = new Column() { ColumnName = c.Name, Type = c.Type, Id = c.Id };
@@ -140,29 +141,83 @@ namespace ReviewApi.Controllers
         [Route("UpdateTemplate")]
         public IActionResult UpdateTemplate([FromBody] ReviewTameplateForForm model)
         {
-            var review = context.ReviewTameplate.Where(x => x.Id == model.Id).Include(x => x.ReviewColumn).Include(x => x.HeaderRow).FirstOrDefault();
-            List<int> reviewColsId = review.ReviewColumn.Select(x => x.Id).ToList();
-            foreach(var m in model.Header)
+            var review = context.ReviewTameplate.Where(x => x.Id == model.Id).Include(x => x.ReviewColumn).Include(x => x.HeaderRow).Include(x =>x.ReviewRole).FirstOrDefault();
+            review.ReviewColumn = review.ReviewColumn.Select(x => { x.Deleted = true; return x; }).ToList();
+            review.HeaderRow = review.HeaderRow.Select(x => { x.Deleted = true; return x; }).ToList();
+            review.ReviewRole = review.ReviewRole.Select(x => { x.Deleted = true; return x; }).ToList();
+            review.Name = model.Name;
+            review.Description = model.Descritpion;
+
+            foreach(var r in model.Roles)
             {
-                var h = review.HeaderRow.Where(x => x.Id == m.Id).FirstOrDefault();
-                if(h != null)
+                ReviewRole role = review.ReviewRole.Where(x => x.Id == r.Id).FirstOrDefault();
+                if(role != null)
                 {
-                    //priradit znaceni deleted protoze nasledne generovani celeho review by nefungovalo                   
+                    role.Name = r.Name;
+                    role.Deleted = false;
+                }
+                else
+                {
+                    ReviewRole rl = new ReviewRole() { Name = r.Name };
+                    review.ReviewRole.Add(rl);
                 }
             }
 
 
-            foreach (var r in model.Columns)
+            foreach (var c in model.Columns)
             {
-                ReviewColumn c = review.ReviewColumn.Where(x => x.Id == r.Id).FirstOrDefault();
-                if(c != null)
+                ReviewColumn column = review.ReviewColumn.Where(x => x.Id == c.Id).FirstOrDefault();
+                if(column != null)
                 {
-                    c.Name = r.ColumnName;
-                    
+                    var enums = context.ReviewColumnTypeEnum.Where(x => x.ReviewColumnId == column.Id).ToList();
+                    context.ReviewColumnTypeEnum.RemoveRange(enums);//delete all enum and create new
+                    column.Type = c.Type;
+                    column.Name = c.ColumnName;
+                    column.Deleted = false;
+                    //var isHeaderMakeSense = context.ReviewColumn.Where(x => x.Id == column.Id).Include(x => x.HeaderRow).FirstOrDefault();
+                    //bool sense = isHeaderMakeSense.HeaderRow.
+                    if(enums != null &&  c.Option != null)
+                        foreach(string s in c.Option)
+                        {
+                            ReviewColumnTypeEnum t = new ReviewColumnTypeEnum() { Name = s };
+                            column.ReviewColumnTypeEnum.Add(t);
+                        }
+                }
+                else
+                {
+                    ReviewColumn cl = new ReviewColumn() { Name = c.ColumnName, Type = c.Type };
+                    if(c.Option != null)
+                        foreach(string s in c.Option)
+                        {
+                            ReviewColumnTypeEnum t = new ReviewColumnTypeEnum() { Name = s };
+                            cl.ReviewColumnTypeEnum.Add(t);
+                        }
+                    review.ReviewColumn.Add(cl);
+                }
+            }
+            foreach(var h in model.Header)
+            {
+                if (h.Id != null)
+                {
+                    review.HeaderRow.Where(x => x.Id == h.Id).FirstOrDefault().Deleted = false;
+                }
+                else
+                {
+                    var col = review.ReviewColumn.Where(x => x.Name == h.ColumnName).FirstOrDefault();
+                    if (col != null)
+                    {
+                        HeaderRow header = new HeaderRow() { Function = h.Fcn, ReviewColumnId = col.Id, Name = h.Name, Parameter = h.Parameter, ReviewTameplateId = review.Id };
+                        context.HeaderRow.Add(header);
+                    }
+                    else
+                    {
+                        HeaderRow header = new HeaderRow() {  Name = h.Name, ReviewTameplateId = review.Id };
+                        context.HeaderRow.Add(header);
+                    }
                 }
             }
 
-
+            context.SaveChanges();
             return Ok();
 
         }

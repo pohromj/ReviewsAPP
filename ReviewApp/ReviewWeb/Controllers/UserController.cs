@@ -126,7 +126,7 @@ namespace ReviewWeb.Controllers
                 string json = JsonConvert.SerializeObject(participants);
                 HttpResponseMessage message = await client.PostAsync("http://localhost:55188/api/Project/ChangeParticipants", new StringContent(json, Encoding.UTF8, "application/json"));
             }
-            return RedirectToAction("ProjectDetail", "Project", new { projectId = participants.ProjectId });
+            return Ok();//RedirectToAction("ProjectDetail", "Project", new { projectId = participants.ProjectId });
         }
     }
 }

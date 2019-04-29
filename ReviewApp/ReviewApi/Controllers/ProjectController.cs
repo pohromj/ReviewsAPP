@@ -77,6 +77,7 @@ namespace ReviewApi.Controllers
         [Route("ProjectDetail")]
         public ProjectDetailModel GetProjectDetail(int id)
         {
+            //throw new Exception();
             var identity = HttpContext.User.Identity as ClaimsIdentity;
             if (identity != null)
             {

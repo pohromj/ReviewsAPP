@@ -55,7 +55,7 @@ namespace ReviewWeb.Controllers
                 return View("~/Views/Tameplate/Templates.cshtml");
             }
         }
-        [HttpGet]
+        [HttpGet("id")]
         [Route("GetTemplateDetail")]
         public IActionResult GetTemplateDetail(int id)
         {

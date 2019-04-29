@@ -283,7 +283,7 @@ function createSetupWindow(name, type, options) {
 function updateReviewForm() {
     if (updateState !== undefined) {
         var table = document.getElementById('workSpaceTable');
-        table.rows[0].cells[updateState].childNodes[0].nodeValue = document.getElementById('columnName').value;
+        table.rows[0].cells[updateState].childNodes[0].nodeValue = document.getElementById('columnThName').value;
         var option = table.rows[1].cells[updateState].childNodes[0];
         option.remove();
         option = table.rows[1].cells[updateState];

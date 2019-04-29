@@ -16,6 +16,7 @@ namespace ReviewApi.Models.Database
         public string Description { get; set; }
         public string Type { get; set; }
         public int ReviewTameplateId { get; set; }
+        public bool? Deleted { get; set; }
 
         public virtual ReviewTameplate ReviewTameplate { get; set; }
         public virtual ICollection<HeaderRow> HeaderRow { get; set; }

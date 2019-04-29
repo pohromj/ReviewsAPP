@@ -19,13 +19,13 @@
                     <div class="btn-toolbar float-right">
                         
                         <div class="btn-group pull-right">
-                            <a class="btn btn-dark" href="@Url.Action("ReviewCreator","Review", new { projectID = @ViewBag.workProductDetail.ProjectId, workproductId = @ViewBag.workProductDetail.Id })"><i class="fas fas fa-tasks"></i></a>
-                            <a class="btn btn-dark" href="@Url.Action("SpecificArtifacts","Artifact", new { projectId = @ViewBag.workProductDetail.ProjectId, workProductId = @ViewBag.workProductDetail.Id})"><i class="fas fa-clipboard-list"></i></a>
+                            <a title="Start review" class="btn btn-dark" href="@Url.Action("ReviewCreator","Review", new { projectID = @ViewBag.workProductDetail.ProjectId, workproductId = @ViewBag.workProductDetail.Id })"><i class="fas fas fa-tasks"></i></a>
+                            <a title="Download Artifacts" class="btn btn-dark" href="@Url.Action("SpecificArtifacts","Artifact", new { projectId = @ViewBag.workProductDetail.ProjectId, workProductId = @ViewBag.workProductDetail.Id})"><i class="fas fa-clipboard-list"></i></a>
                             
                         </div>
                         <div class="btn-group" style="margin-left: 5px;">
-                            <button class="btn btn-dark" onclick="updateWorkProduct()"><i class="fas fa-pen"></i></button>
-                            <a class="btn btn-danger" href="@Url.Action("DeleteWorkproduct","Project", new { id = @ViewBag.workProductDetail.Id, projectid = @ViewBag.workProductDetail.ProjectId})"><i class="fas fa-trash-alt"></i></a>
+                            <button title="Update Work product" class="btn btn-dark" onclick="updateWorkProduct()"><i class="fas fa-pen"></i></button>
+                            <a title="Delete work product" class="btn btn-danger" href="@Url.Action("DeleteWorkproduct","Project", new { id = @ViewBag.workProductDetail.Id, projectid = @ViewBag.workProductDetail.ProjectId})"><i class="fas fa-trash-alt"></i></a>
                         </div>
                     </div>
                  

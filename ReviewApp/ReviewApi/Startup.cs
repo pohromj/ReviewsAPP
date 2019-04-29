@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using ReviewApi.BusinessLogic;
 
 namespace ReviewApi
 {
@@ -59,6 +60,7 @@ namespace ReviewApi
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
             app.UseAuthentication();              
             app.UseMvc();
         }

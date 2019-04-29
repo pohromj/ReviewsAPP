@@ -16,6 +16,7 @@ namespace ReviewApi.Models.Database
         public string Parameter { get; set; }
         public int ReviewTameplateId { get; set; }
         public int? ReviewColumnId { get; set; }
+        public bool? Deleted { get; set; }
 
         public virtual ReviewColumn ReviewColumn { get; set; }
         public virtual ReviewTameplate ReviewTameplate { get; set; }

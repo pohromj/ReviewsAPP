@@ -31,7 +31,7 @@
                         }
                         else
                         {
-                            <td><span data-count-col="@a.ColumnName" data-count-val="@a.Parameter" data-count-id="@a.Id">@a.Data</span></td>
+                            <td><span data-col-id="@a.ColumnId" data-count-col="@a.ColumnName" data-count-val="@a.Parameter" data-count-id="@a.Id">@a.Data</span></td>
                         }
                     </tr>
                 }
@@ -161,16 +161,16 @@
             contentType: "application/json; charset=utf-8",
             data: data,
             success: function (result) {
-                if (result !== null) {
-                    // document.getElementById("result").innerHTML = JSON.stringify(result);
-                    //window.location.href = '/Review/GetReview?id=' + result;
-                    alert("Progress was saved");
-                } else {
-                    //document.getElementById("result").innerHTML = "NULL";
-                    alert("KO");
 
-                }
+            },
+            complete: function () {
+                Swal.fire(
+                    'Review saved !',
+                    '',
+                    'success'
+                )
             }
+
         });
 
 

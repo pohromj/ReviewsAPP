@@ -121,18 +121,20 @@ Participants on project
             dataType: 'json',
             contentType: "application/json; charset=utf-8",
             data: data,
-            success: function (result) {
-                if (result !== null) {
-                    // document.getElementById("result").innerHTML = JSON.stringify(result);
-                    alert(result.result);
-                } else {
-                    //document.getElementById("result").innerHTML = "NULL";
-                    alert("KO");
-
-                }
+            success: function () {
+               
+            },
+            complete: function (xhr,textStatus) {
+                Swal.fire(
+                    'Participants has been saved!',
+                    '',
+                    'success'
+                )
+                addedUsers = [];
+                removedUsers = [];
             }
         });
-
+       
     }
 
 

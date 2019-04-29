@@ -11,7 +11,10 @@
     <tbody>
         @foreach(var t in ViewBag.Templates)
         {
-            <tr><td><a href="@Url.Action("GetTemplateDetail","Template", new { id = @t.ID})">@t.Name</a></td></tr>
+            string url = "/Template/GetTemplateDetail?id=" + t.ID;
+            <tr><td>
+                    <a href="@url">@t.Name</a>
+                <!--<a href="@Url.Action("GetTemplateDetail","Template", new { id = @t.ID})">@t.Name</a>--></td></tr>
         }
     </tbody>
 </table>

@@ -13,5 +13,6 @@ namespace ReviewWeb.Models.ReviewTameplateModels
         public string Parameter { get; set; }
         public string ColumnName { get; set; }
         public string Data { get; set; }
+        public int? ColumnId { get; set; }
     }
 }

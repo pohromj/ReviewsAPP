@@ -33,7 +33,7 @@ namespace ReviewWeb.Controllers
                 HttpResponseMessage message = await client.PostAsync("http://localhost:55188/api/Artifact/GetArtifactsFormUrl", new StringContent(json, Encoding.UTF8, "application/json"));
                 //xmlNodes = JsonConvert.DeserializeObject<List<string>>(await message.Content.ReadAsStringAsync());
             }
-            return RedirectToAction("ProjectDetail", "Projects", new { projectId = model.ProjectId });
+            return RedirectToAction("GetWorkProductDetail", "Project", new { id = model.WorkProductId });
         }
         [HttpGet]
         public async Task<IActionResult> ShowWorkProductArtifacts(int workProductId, int page)

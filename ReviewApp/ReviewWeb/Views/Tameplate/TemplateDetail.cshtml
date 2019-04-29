@@ -189,7 +189,7 @@
         var tmpname = document.getElementById('templateName');
         var tmpdesc = document.getElementById('templateDescription');
         tmpname.value = name;
-        if (typeof description !== undefined)
+        if ( description !== null)
          tmpdesc.value = description;
         
     }
@@ -228,11 +228,11 @@
     function prepareHeader(header) {
         for (var i = 0; i < header.length; i++) {
             console.log(header[i]);
-            prepareAppendToHeaderTable(header[i].id,header[i].fcn, header[i].name, header[i].columnName, header[i].parameter);
+            prepareAppendToHeaderTable(header[i].id,header[i].fcn, header[i].name, header[i].columnName, header[i].parameter,header[i].columnId);
         }
 
     }
-    function prepareAppendToHeaderTable(id,fnc, name, specificColumnValue, specificColumnEnumValue) {
+    function prepareAppendToHeaderTable(id,fnc, name, specificColumnValue, specificColumnEnumValue,colId) {
         console.log(fnc);
         var table = document.getElementById('CustomValue');
         var tr = document.createElement('tr');
@@ -242,6 +242,7 @@
         td.appendChild(text);
         var td1 = document.createElement('td');
         td1.setAttribute('data-id', id);
+        td1.setAttribute('data-col-id', colId);
         var td2 = document.createElement('td');
         var btn = document.createElement('button');
         //var btnName = document.createTextNode('Delete');
@@ -442,9 +443,10 @@
             var columnName = table.rows[i].cells[0].innerText;
             var rowType = table.rows[i].cells[1].getElementsByTagName('input');
             var id = table.rows[i].cells[1].getAttribute('data-id');
+            var colId = table.rows[i].cells[1].getAttribute('data-col-id');
             if (rowType.length > 0) {
                 
-                var element = putcreateHeaderElement(id,columnName, null, null, null);
+                var element = putcreateHeaderElement(id,columnName, null, null, null,null);
                 headeElements.push(element);
             }
             else {
@@ -458,16 +460,24 @@
                 var fnc = tmp.fnc.innerText;
                 var parameter = tmp.opt.innerText;
                 var column = tmp.columnName.innerText;
-                var element = putcreateHeaderElement(id,columnName, fnc, parameter, column);
-                headeElements.push(element);
+                if (column === null) {
+                    var element = putcreateHeaderElement(id, columnName, fnc, parameter, null, colId);
+                    headeElements.push(element);
+                }
+                else {
+                    var element = putcreateHeaderElement(id, columnName, fnc, parameter, column, colId);
+                    headeElements.push(element);
+                }
+                    
             }
         }
         return headeElements;
     }
-    function putcreateHeaderElement(id,name, fcn, parameter, columnName) {
+    function putcreateHeaderElement(id,name, fcn, parameter, columnName,colId) {
         var element = new Object();
         element.name = name;
         element.id = id;
+        element.columnId = colId;
         if (fcn !== null) {
             element.fcn = fcn;
             element.parameter = parameter;
