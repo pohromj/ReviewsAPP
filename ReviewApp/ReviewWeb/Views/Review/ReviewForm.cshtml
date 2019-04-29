@@ -41,11 +41,15 @@
     <div class="col">
         <div class="card float-right" style="width: 18rem;">
             <div class="card-body">
-                <ul>
-                    <li><button class="btn btn-primary" onclick="saveReviewProgress(@ViewBag.ReviewId)">Save</button></li>
-                    <li><button class="btn btn-primary" onclick="saveReview()">Change</button></li>
-                    <li><button class="btn btn-primary" onclick="saveReview()">Update</button></li>
-                </ul>
+                <div class="btn-toolbar float-right ">
+                    <div class="btn-group">
+                        <button title="Save Review" class="btn btn-dark" onclick="saveReviewProgress(@ViewBag.ReviewId)"><i class="far fa-save"></i></button>
+                        <button class="btn btn-dark" onclick="saveReview()"><i class="fas fa-file-export"></i></button>
+                    </div>
+                    <div class="btn-group" style="margin-left: 4px;">
+                        <button class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

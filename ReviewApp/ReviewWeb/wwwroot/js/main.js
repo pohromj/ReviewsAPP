@@ -215,7 +215,7 @@ function getElementType() {
 }
 var updateState = undefined;
 function removeElement() {
-    document.getElementById('columnName').value = "";
+    document.getElementById('columnThName').value = "";
     var table = document.getElementById('optionSetup');
     var tableRows = table.rows.length;
     for (var i = 0; i < tableRows; i++) {
@@ -260,7 +260,7 @@ function restoreOptionData(index) {
 }
 function createSetupWindow(name, type, options) {
     formValue = 0;
-    var columnName = document.getElementById('columnName');
+    var columnName = document.getElementById('columnThName');
     var opt = document.getElementById('columnType');
     columnName.value = name;
     if (type === 'text') {

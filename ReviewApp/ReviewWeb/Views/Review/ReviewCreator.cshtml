@@ -73,7 +73,7 @@
         <div class="card-header" id="headingTwo">
             <h5 class="mb-0">
                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                    Review setup
+                    User setup
                 </button>
             </h5>
         </div>
@@ -130,7 +130,7 @@
         <div class="card-header" id="headingThree">
             <h5 class="mb-0">
                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseTwo" onclick="">
-                    Data setup
+                    Data column setup
                 </button>
             </h5>
         </div>
@@ -162,16 +162,17 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col">
-
+                        <h4>All artifacts</h4>
                         <table id="ArtifactTable" class="display cell-border nowrap" style="width:100%;">
-                            <thead><tr><th>ID</th><th>Artifact</th><th><button onclick="addAllArtifacts()">Add all</button></th></tr></thead>
+                            <thead><tr><th>ID</th><th>Artifact</th><th><button class="btn btn-primary" onclick="addAllArtifacts()"><i class="fas fa-plus-circle"></i> Add all</button></th></tr></thead>
                             <tbody></tbody>
 
                         </table>
                     </div>
                     <div class="col">
+                        <h4>Artifacts for review</h4>
                         <table id="artifactsForReview" class="display cell-border nowrap" style="width:100%;">
-                            <thead><tr><th>ID</th><th>Artifact</th><th><button onclick="removeAllArtifacts()" class="btn-outline-primary btn-sm"><i class="fas fa-eraser"></i>Remove all</button></th></tr></thead>
+                            <thead><tr><th>ID</th><th>Artifact</th><th><button onclick="removeAllArtifacts()" class="btn btn-danger"><i class="fas fa-eraser"></i> Remove all</button></th></tr></thead>
                             <tbody></tbody>
 
                         </table>
