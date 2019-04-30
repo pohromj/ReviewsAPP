@@ -221,5 +221,11 @@ namespace ReviewApi.Controllers
             return Ok();
 
         }
+        [HttpDelete]
+        [Route("DeleteTemplate")]
+        public IActionResult DeleteTemplate(int id)
+        {
+            return Ok();
+        }
     }
 }

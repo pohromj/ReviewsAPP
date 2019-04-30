@@ -36,7 +36,7 @@ namespace ReviewApi.Controllers
             u.Lastname = registrationModel.Lastname;
             u.Password = hashedPassword;
             u.Salt = slt;
-            u.SystemRoleId = 2; //zmenit potom na nacteni z databaze dane role
+            u.SystemRoleId = context.SystemRole.FirstOrDefault().Id; //2; //zmenit potom na nacteni z databaze dane role
             context.Users.Add(u);
             context.SaveChanges();
             return Ok();

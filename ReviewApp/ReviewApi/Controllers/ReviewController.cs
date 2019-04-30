@@ -217,5 +217,14 @@ namespace ReviewApi.Controllers
             }
             return review;
         }
+        [HttpDelete]
+        [Route("DeleteReview")]
+        public IActionResult DeleteReview(int id)
+        {
+            var review = context.Review.Where(x => x.Id == id).Include(x => x.IbmArtifactReview).Include(x => x.HeaderRowData).Include(x => x.UserReviewRole).FirstOrDefault();
+            context.Remove(review);
+            context.SaveChanges();
+            return Ok();
+        }
     }
 }
