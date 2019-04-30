@@ -38,7 +38,7 @@ namespace ReviewApi.Controllers
                     new Claim("UserEmail",user.Email),
                     new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
                 };
-
+                
                 var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SecreteKeyForMyAlgorithm"));
 
                 var token = new JwtSecurityToken(

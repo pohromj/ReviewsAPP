@@ -74,5 +74,16 @@ namespace ReviewWeb.Controllers
                 return Ok();
             }
         }
+        [Route("DeleteTemplate")]
+        public async Task<IActionResult>DeleteTemplate(int id)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
+                
+                HttpResponseMessage msg = await client.DeleteAsync("http://localhost:55188/api/Tameplate/DeleteTemplate?id=" + id);
+                return RedirectToAction("ShowAllTemplates", "Template");
+            }
+        }
     }
 }

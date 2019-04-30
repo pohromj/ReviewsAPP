@@ -7,14 +7,17 @@
 
 
 <table id="templates" class="display cell-border nowrap" style="width: 100%">
-    <thead><tr><th>Template name</th></tr></thead>
+    <thead><tr><th>Template name</th><th></th></tr></thead>
     <tbody>
         @foreach(var t in ViewBag.Templates)
         {
+            string del = "/Template/DeleteTemplate?id=" + t.ID;
             string url = "/Template/GetTemplateDetail?id=" + t.ID;
             <tr><td>
                     <a href="@url">@t.Name</a>
-                <!--<a href="@Url.Action("GetTemplateDetail","Template", new { id = @t.ID})">@t.Name</a>--></td></tr>
+                <!--<a href="@Url.Action("GetTemplateDetail","Template", new { id = @t.ID})">@t.Name</a>--></td>
+            <td><a class="btn btn-danger" href="@del"><i class="fas fa-trash-alt"></i></a></td>
+            </tr>
         }
     </tbody>
 </table>

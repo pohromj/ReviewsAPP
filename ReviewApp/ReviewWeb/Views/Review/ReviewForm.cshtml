@@ -49,11 +49,11 @@
                             <button title="Save Review" class="btn btn-dark" onclick="saveReviewProgress(@ViewBag.ReviewId)"><i class="far fa-save"></i></button>
                         }
 
-                        <button title="Export Review" class="btn btn-dark" onclick="saveReview()"><i class="fas fa-file-export"></i></button>
+                        <!--<button title="Export Review" class="btn btn-dark" onclick="saveReview()"><i class="fas fa-file-export"></i></button>-->
 
                     </div>
                     <div class="btn-group" style="margin-left: 4px;">
-                        <button class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+                        <a href="@Url.Action("DeleteReview","Review", new { id = ViewBag.ReviewId})" class="btn btn-danger"><i class="fas fa-trash-alt"></i></a>
                     </div>
                 </div>
             </div>

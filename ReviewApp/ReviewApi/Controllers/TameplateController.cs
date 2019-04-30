@@ -73,7 +73,7 @@ namespace ReviewApi.Controllers
         public IEnumerable<ReviewTamplateNames> GetAllTameplates()
         {
             List<ReviewTamplateNames> names = new List<ReviewTamplateNames>();
-            foreach (var tmp in context.ReviewTameplate)
+            foreach (var tmp in context.ReviewTameplate.Where(x => x.Deleted !=true))
             {
                 names.Add(new ReviewTamplateNames() { ID = tmp.Id, Name = tmp.Name });
             }
@@ -85,7 +85,7 @@ namespace ReviewApi.Controllers
         public ReviewTameplateForForm GetTameplate(int id)
         {
             ReviewTameplateForForm tameplate = new ReviewTameplateForForm();
-            var tmp = context.ReviewTameplate.Where(t => t.Id == id).FirstOrDefault();
+            var tmp = context.ReviewTameplate.Where(t => t.Id == id && t.Deleted != true).FirstOrDefault();
             if (tmp != null)
             {
                 tameplate.Id = tmp.Id;
@@ -225,6 +225,8 @@ namespace ReviewApi.Controllers
         [Route("DeleteTemplate")]
         public IActionResult DeleteTemplate(int id)
         {
+            var tmp = context.ReviewTameplate.Where(x => x.Id == id).FirstOrDefault().Deleted = true;
+            context.SaveChanges();
             return Ok();
         }
     }

@@ -95,13 +95,15 @@
         desc.innerHTML = "";
         desc.innerText = previousDescription;
         var row = document.getElementById('lastRow');
-        row.setAttribute('hiddent', 'hidden');
+        row.setAttribute('hidden', 'hidden');
     }
     function updateWk(id) {
         var obj = new Object();
         obj.Id = id;
         obj.Name = document.getElementById('inputTD').getElementsByTagName('input')[0].value;
         obj.Description = document.getElementById('textareaTD').getElementsByTagName('textarea')[0].value;
+        var row = document.getElementById('lastRow');
+        row.setAttribute('hidden', 'hidden');
         var data = JSON.stringify(obj);
         $.ajax({
             type: 'PUT',

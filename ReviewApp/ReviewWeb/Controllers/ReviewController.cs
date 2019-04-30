@@ -147,6 +147,16 @@ namespace ReviewWeb.Controllers
                 return Ok();
             }
         }
-       
+        [Route("DeleteReview")]
+       public async Task<IActionResult>DeleteReview(int id)
+       {
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
+                
+                HttpResponseMessage message = await client.DeleteAsync("http://localhost:55188/api/Review/DeleteReview?id=" + id);
+                return RedirectToAction("ShowProjects", "Project");
+            }
+        }
     }
 }

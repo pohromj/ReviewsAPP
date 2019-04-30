@@ -40,8 +40,8 @@ namespace ReviewApi.Models.Database
         {
             if (!optionsBuilder.IsConfigured)
             {
-/*#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=completeDB;Trusted_Connection=True;");*/
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=completeDB;Trusted_Connection=True;");
             }
         }
 
@@ -438,6 +438,8 @@ namespace ReviewApi.Models.Database
                 entity.ToTable("Review_tameplate");
 
                 entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Deleted).HasColumnName("deleted");
 
                 entity.Property(e => e.Description).HasColumnType("text");
 

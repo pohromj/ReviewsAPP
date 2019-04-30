@@ -17,6 +17,7 @@ namespace ReviewApi.Models.Database
         public string Name { get; set; }
         public string Description { get; set; }
         public string UsersEmail { get; set; }
+        public bool? Deleted { get; set; }
 
         public virtual Users UsersEmailNavigation { get; set; }
         public virtual ICollection<HeaderRow> HeaderRow { get; set; }

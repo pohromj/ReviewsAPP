@@ -222,7 +222,10 @@ namespace ReviewApi.Controllers
         public IActionResult DeleteReview(int id)
         {
             var review = context.Review.Where(x => x.Id == id).Include(x => x.IbmArtifactReview).Include(x => x.HeaderRowData).Include(x => x.UserReviewRole).FirstOrDefault();
-            context.Remove(review);
+            context.IbmArtifactReview.RemoveRange(review.IbmArtifactReview);
+            context.HeaderRowData.RemoveRange(review.HeaderRowData);
+            context.UserReviewRole.RemoveRange(review.UserReviewRole);
+            context.Review.Remove(review);
             context.SaveChanges();
             return Ok();
         }

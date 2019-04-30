@@ -853,3 +853,26 @@ insert into dbo.Project_type values('IBM Project')
 
 select * from Header_Row
 select * from users
+
+create table Task_plan(
+id int NOT NULL identity(1,1),
+ibm_id int not null,
+name varchar(256),
+url text not null,
+type varchar(256),
+Project_id int not null
+CONSTRAINT PK_Task_plan PRIMARY KEY (ID)
+)
+alter table Task_plan
+add constraint Project_FK
+Foreign key (Project_id) references Project(id)
+select * from Task_plan
+
+alter table Review
+add IsEmpty bit
+
+alter table Review
+add Complete bit
+
+alter table Review_tameplate
+add deleted bit
