@@ -17,5 +17,6 @@ namespace ReviewApi.Models.Review
         public int Project { get; set; }
         public string Html { get; set; }
         public bool IsEmpty { get; set; }
+        public bool? Complete { get; set; }
     }
 }

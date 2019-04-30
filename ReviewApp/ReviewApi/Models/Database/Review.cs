@@ -24,6 +24,8 @@ namespace ReviewApi.Models.Database
         public int ReviewTameplateId { get; set; }
         public int WorkproductProjectId { get; set; }
         public string Html { get; set; }
+        public bool? IsEmpty { get; set; }
+        public bool? Complete { get; set; }
 
         public virtual ReviewTameplate ReviewTameplate { get; set; }
         public virtual Workproduct Workproduct { get; set; }

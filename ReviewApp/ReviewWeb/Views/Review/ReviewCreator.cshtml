@@ -400,15 +400,18 @@
         }
         function getSpecificArtifacts(idx) {
             var artifacts = [];
-            console.log('getSpecificArtifacts');
+            /*console.log('getSpecificArtifacts');
             console.log(idx);
-            console.log(art);
-            for (var i = 0; i < art.length; i++) {
-                for (var j = 0; j < idx.length; j++) {
-                    if (art[i].id === parseInt(idx[j]))
-                        artifacts.push(art[i]);
+            console.log(art);*/
+            if (typeof art !== 'undefined') {
+                for (var i = 0; i < art.length; i++) {
+                    for (var j = 0; j < idx.length; j++) {
+                        if (art[i].id === parseInt(idx[j]))
+                            artifacts.push(art[i]);
+                    }
                 }
             }
+                
             return artifacts;
         }
         function createReviewWithData(artifacts, dataForColumns) {

@@ -27,7 +27,7 @@
                         <td>@a.Name</td>
                         @if (a.Fcn == null)
                         {
-                            <td><input type="text"  class="form-control" value="@a.Data" data-count-id="@a.Id"/></td>
+                            <td><input type="text" class="form-control" value="@a.Data" data-count-id="@a.Id" /></td>
                         }
                         else
                         {
@@ -43,8 +43,14 @@
             <div class="card-body">
                 <div class="btn-toolbar float-right ">
                     <div class="btn-group">
-                        <button title="Save Review" class="btn btn-dark" onclick="saveReviewProgress(@ViewBag.ReviewId)"><i class="far fa-save"></i></button>
-                        <button class="btn btn-dark" onclick="saveReview()"><i class="fas fa-file-export"></i></button>
+                        @if (ViewBag.ReviewSetup.Setup.Complete != true)
+                        {
+                            <button id="fin" title="Finish review" class="btn btn-dark"><i class="fas fa-check-circle" onclick="closeReview(@ViewBag.ReviewId)"></i></button>
+                            <button title="Save Review" class="btn btn-dark" onclick="saveReviewProgress(@ViewBag.ReviewId)"><i class="far fa-save"></i></button>
+                        }
+
+                        <button title="Export Review" class="btn btn-dark" onclick="saveReview()"><i class="fas fa-file-export"></i></button>
+
                     </div>
                     <div class="btn-group" style="margin-left: 4px;">
                         <button class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
@@ -54,9 +60,35 @@
         </div>
     </div>
 </div>
-<div id="ReviewForm">
-    @Html.Raw(@ViewBag.ReviewSetup.Setup.Html)
-</div>
+@if (ViewBag.ReviewSetup.Setup.Complete != true && ViewBag.ReviewSetup.Setup.IsEmpty == true)
+{
+    <div id="ReviewForm">
+        @Html.Raw(@ViewBag.ReviewSetup.Setup.Html)
+    </div>
+    <button class="btn btn-primary" onclick="AddRowToReview()"><i class="fas fa-plus-circle" id="EmptyReview"></i> Add row</button>
+}
+else
+{
+    <div id="ReviewForm">
+        @Html.Raw(@ViewBag.ReviewSetup.Setup.Html)
+    </div>
+    <script>
+        $(document).ready(function () {
+            var fin = document.getElementById('fin');
+            console.log(fin);
+            if (fin === null) {
+                var table = document.getElementById('Reviews');
+                table.style = "pointer-events:none;";
+            }
+            
+            
+        }
+        )
+    </script>
+}
+
+
+
 <script>
     var tbl;
     $(document).ready(function () {
@@ -78,18 +110,92 @@
         }).find('textarea').change();
     });
 
+    function AddRowToReview() {
+        var table = document.getElementById('Reviews');
+        var row = table.rows[1].cloneNode(true);
+        removeValues(row);
+        //console.log(row);
+        var btn = createRemoveButton();
+        row.cells[0].appendChild(btn);
+        tbl.row.add(row).draw();
+    }
+    function closeReview(id) {
+        Swal.fire({
+            title: 'Close review?',
+            text: "You won't be able change anything!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes'
+        }).then((result) => {
 
+            if (result.value) {
+                tbl.destroy();
+                var html = document.getElementById('ReviewForm');
+                changeTextAreas();
+                var htmldata = document.createTextNode(html.innerHTML);
+                console.log(htmldata);
+                var headerData = createObjects();
+                console.log(headerData);
+                var data = JSON.stringify({ reviewId: id, Html: htmldata.data, HeaderDatas: headerData });
+                console.log(data);
+                $.ajax({
+                    type: 'POST',
+                    url: "http://localhost:49727/Review/CloseReview",
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    data: data,
+                    success: function (result) {
+
+                    },
+                    complete: function () {
+                        Swal.fire(
+                            'Review Closed!',
+                            '',
+                            'success'
+                        )
+                        location.reload();
+                    }
+
+                });
+
+
+
+                tbl = $('#Reviews').DataTable({ paging: false, "scrollX": true, destroy: true, ordering: false });
+
+            }
+        });
+    }
 </script>
 <script>
+    function removeValues(row) {
+        var areas = row.getElementsByTagName('textarea');
+        for (var i = 0; i < areas.length; i++) {
+            areas[i].value = "";
+        }
+
+    }
     function copyRow(index) {
 
+        var empty = document.getElementById('EmptyReview');
+        console.log(empty);
+        if (empty === null) {
+            var html = index.parentNode.parentNode.cloneNode(true);
+            html.deleteCell(0);
+            var a = html.insertCell(0);
+            a.appendChild(createRemoveButton());
+            tbl.row.add(html).draw();
+        }
+        else {
+            var table = document.getElementById('Reviews');
+            var row = table.rows[1].cloneNode(true);
+            removeValues(row);
+            row.cells[0].appendChild(createRemoveButton());
+            tbl.row.add(row).draw();
+        }
 
-        var html = index.parentNode.parentNode.cloneNode(true);
-        html.deleteCell(0);
-        var a = html.insertCell(0);
-        a.appendChild(createRemoveButton());
-
-        tbl.row.add(html).draw();//.draw();
+        //tbl.row.add(html).draw();//.draw();
         var currentPage = tbl.page();
         console.log(currentPage);
         var idx = index.parentNode.parentNode.rowIndex,
@@ -156,7 +262,7 @@
         console.log(data);
         $.ajax({
             type: 'POST',
-            url: "http://localhost:49727/Review/SaveReviewProgress", 
+            url: "http://localhost:49727/Review/SaveReviewProgress",
             dataType: 'json',
             contentType: "application/json; charset=utf-8",
             data: data,
@@ -205,10 +311,10 @@
         var textAreas = document.getElementById('Reviews').getElementsByTagName('textarea');
         for (var i = 0; i < textAreas.length; i++) {
             var text = textAreas[i].value;
-            
+
             textAreas[i].innerText = text;
-            
+
         }
     }
-    
+
 </script>

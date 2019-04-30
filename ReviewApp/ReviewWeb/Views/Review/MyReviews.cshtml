@@ -4,11 +4,29 @@
 }
 
 <h2>MyReviews</h2>
-<table class="table table-bordered">
-    @foreach(var r in ViewBag.ReviewSetup)
+<table class="table table-bordered" id="allReviews" class="display cell-border nowrap" style="width: 100%">
+    <thead><tr><th>#</th><th>Review name</th><th>Complete</th></tr></thead>
+    @foreach (var r in ViewBag.ReviewSetup)
     {
-        <tr><td><a href="@Url.Action("GetReview","Review", new { id = @r.Id})">@r.Name</a></td></tr>
+        <tr>
+            <td>@r.Id</td>
+            <td><a href="@Url.Action("GetReview","Review", new { id = @r.Id})">@r.Name</a></td>
+            @if (r.Complete == true)
+            {
+                <td>Yes</td>
+            }
+            else
+            {
+                <td>No</td>
+            }
+        </tr>
     }
 </table>
-
-
+<script>
+    $(document).ready(function () {
+        tbl = $('#allReviews').DataTable(
+            {
+                paging: true,
+            });
+    });
+</script>

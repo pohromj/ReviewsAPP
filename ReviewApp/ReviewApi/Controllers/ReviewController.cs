@@ -37,7 +37,8 @@ namespace ReviewApi.Controllers
                 StartDate = review.Setup.StartDate,
                 //WorkproductId = review.Setup.WorkProduct,
                 ReviewTameplateId = review.Setup.Tameplate,
-                Html = review.Setup.Html               
+                Html = review.Setup.Html,
+                IsEmpty = review.Setup.IsEmpty           
             };
             var tmp = context.ReviewTameplate.Where(x => x.Id == review.Setup.Tameplate).
                 Include(p => p.HeaderRow).FirstOrDefault();
@@ -78,12 +79,13 @@ namespace ReviewApi.Controllers
             FullReview review = new FullReview();
             Review r = context.Review.Where(x => x.Id == id).FirstOrDefault();
             Workproduct w = context.Workproduct.Where(s => s.Id == r.WorkproductId).FirstOrDefault();
-            Project p = context.Project.Where(i => i.Id == w.Id).FirstOrDefault();
+            Project p = context.Project.Where(i => i.Id == w.ProjectId).FirstOrDefault();
             Setup setup = new Setup()
             {
                 ProjectName = p.Name,
                 WorkProductName = w.Name,
-                Html = r.Html
+                Html = r.Html,
+                IsEmpty = r.IsEmpty, Complete = r.Complete
             };
             review.Setup = setup;
             review.Participant = GetParticipants(id);
@@ -133,7 +135,8 @@ namespace ReviewApi.Controllers
                 myReviews.Add(new ReviewSetup()
                 {
                     Name = r.Review.Name,
-                    Id = r.Review.Id
+                    Id = r.Review.Id,
+                    Complete = r.Review.Complete
                 });
             }
             return myReviews;
@@ -172,6 +175,47 @@ namespace ReviewApi.Controllers
             }
             artifact.Reviews = setups;
             return artifact;
+        }
+        [HttpPost]
+        [Route("CloseReview")]
+        public IActionResult CloseReview([FromBody] ReviewProgress progress)
+        {
+            var r = context.Review.Where(x => x.Id == progress.ReviewId).Include(x => x.HeaderRowData).FirstOrDefault();
+            r.Html = progress.Html;
+            foreach(var row in progress.HeaderDatas)
+            {
+                r.HeaderRowData.Where(x => x.HeaderRowId == row.HeaderRowId).FirstOrDefault().Value = row.Data;
+                
+            }
+            r.Complete = true;
+            context.SaveChanges();
+            return Ok();
+        }
+        [HttpGet]
+        [Route("GetReviewsForProject")]
+        public List<ProjectReview> GetReviewsForProject(int id)
+        {
+            var review = context.Review.Where(x => x.WorkproductProjectId == id).Include(x => x.Workproduct).ToList();
+            List<ProjectReview> reviews = new List<ProjectReview>();
+            foreach(var r in review)
+            {
+                ProjectReview p = new ProjectReview() { Complete = r.Complete, Id = r.Id, Name = r.Name, WorkProductId = r.WorkproductId, WorkProductName = r.Workproduct.Name };
+                reviews.Add(p);
+            }
+            return reviews;
+        }
+        [HttpGet]
+        [Route("GetReviewsForWorkProduct")]
+        public List<ProjectReview>GetReviewsForWorkProduct(int id)
+        {
+            var reviews = context.Review.Where(x => x.WorkproductId == id).ToList();
+            List<ProjectReview> review = new List<ProjectReview>();
+            foreach(var r in reviews)
+            {
+                ProjectReview pr = new ProjectReview() { Complete = r.Complete, Name = r.Name, Id = r.Id };
+                review.Add(pr);                
+            }
+            return review;
         }
     }
 }

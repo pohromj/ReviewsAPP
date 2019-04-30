@@ -10,5 +10,7 @@ namespace ReviewApi.Models.Review
         public string WorkProductName { get; set; }
         public string ProjectName { get; set; }
         public string Html { get; set; }
+        public bool? IsEmpty { get; set; }
+        public bool? Complete { get; set; }
     }
 }

@@ -50,13 +50,13 @@ namespace ReviewWeb.Controllers
                     return View("Login");
                 }
             }
-            return View("~/Views/Home/DashBoard.cshtml");
+            return RedirectToAction("ShowProjects", "Project");
             //return RedirectToAction("Index", "Home");
         }
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
-            return RedirectToAction("Login", "LoginPage");
+            return View("~/Views/Login/Login.cshtml");//RedirectToAction("Login", "LoginPage");
         }
     }
 }

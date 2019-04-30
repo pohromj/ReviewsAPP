@@ -81,6 +81,12 @@ namespace ReviewWeb.Controllers
                 HttpResponseMessage message = await client.GetAsync("http://localhost:55188/api/Project/ProjectDetail?id=" + projectId);
                 var project = JsonConvert.DeserializeObject<ProjectDetailViewModel>(await message.Content.ReadAsStringAsync());
                 ViewBag.Project = project;
+
+                HttpResponseMessage m = await client.GetAsync("http://localhost:55188/api/Review/GetReviewsForProject?id=" + projectId);
+                var reviews = JsonConvert.DeserializeObject<List<ProjectReview>>(await m.Content.ReadAsStringAsync());
+
+                ViewBag.Reviews = reviews;
+
                 //HttpResponseMessage msg = await client.GetAsync("http://localhost:55188/api/Artifact/GetAllArtifactForProject?id=" + projectId);
                 //HttpResponseMessage msg = await client.GetAsync("http://localhost:55188/api/Artifact/GetArtifactsPerPage?projectId=" + projectId + "&&page=" + 0);
                 /*
@@ -128,7 +134,9 @@ namespace ReviewWeb.Controllers
                 var workProductDetail = JsonConvert.DeserializeObject<WorkProductViewModel>(await message.Content.ReadAsStringAsync());
                 ViewBag.workProductDetail = workProductDetail;
                 HttpResponseMessage msg = await client.GetAsync("http://localhost:55188/api/Artifact/GetAllArtifactForWorkProduct?id=" + id);
-                
+                HttpResponseMessage msgReviews = await client.GetAsync("http://localhost:55188/api/Review/GetReviewsForWorkProduct?id=" + id);
+                var reviews = JsonConvert.DeserializeObject<List<ProjectReview>>(await msgReviews.Content.ReadAsStringAsync());
+                ViewBag.Reviews = reviews;
                 //HttpResponseMessage msg = await client.GetAsync("http://localhost:55188/api/Artifact/GetArtifactsPerPage?workProductId=" + id + "&&page=" + 0);
                 var artifacts = JsonConvert.DeserializeObject<List<JazzArtifact>>(await msg.Content.ReadAsStringAsync());
                 ViewBag.Artifacts = artifacts;

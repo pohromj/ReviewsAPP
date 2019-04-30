@@ -47,7 +47,22 @@
         </table>
     </div>
     <div class="col">
+        <h4>Unfinished reviews</h4>
+        <table id="NeededReviews" class="table table-sm">
+            <thead><tr><th>Review name</th><th>Work product</th></tr></thead>
+            @foreach (var v in ViewBag.Reviews)
+            {
+                @if (v.Complete != true)
+                {
+                    <tr>
+                        <td><a href="@Url.Action("GetReview","Review", new { id = v.Id})">@v.Name</a></td>
+                        <td><a href="@Url.Action("GetWorkProductDetail","Project", new { id = v.WorkProductId})">@v.WorkProductName</a></td>
+                    </tr>
+                }
 
+            }
+
+        </table>
     </div>
     <div class="col">
 

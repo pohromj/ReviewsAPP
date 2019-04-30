@@ -34,6 +34,26 @@
         </div>
     </div>
 </div>
+<div class="row">
+    <div class="col">
+        <h4>Unfinished reviews</h4>
+        <table id="NeededReviews" class="table table-sm">
+            <thead><tr><th>Review name</th></tr></thead>
+            @foreach (var v in ViewBag.Reviews)
+            {
+                @if (v.Complete != true)
+                {
+                    <tr>
+                        <td><a href="@Url.Action("GetReview","Review", new { id = v.Id})">@v.Name</a></td>
+                    </tr>
+                }
+            }
+
+        </table>
+    </div>
+    <div class="col"></div>
+    <div class="col"></div>
+</div>
 <h2>Work product artifacts</h2>
 
 <table id="artifacts" class="display cell-border nowrap" style="width: 100%">

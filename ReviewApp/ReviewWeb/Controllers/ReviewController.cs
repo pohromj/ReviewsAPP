@@ -136,5 +136,17 @@ namespace ReviewWeb.Controllers
                 return View("~/Views/Review/ReviewsForArtifact.cshtml");
             }
         }
+        [HttpPost("CloseReview")]
+        public async Task<IActionResult> CloseReview([FromBody] ReviewProgress progress)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
+                string json = JsonConvert.SerializeObject(progress);
+                HttpResponseMessage message = await client.PostAsync("http://localhost:55188/api/Review/CloseReview", new StringContent(json, Encoding.UTF8, "application/json"));
+                return Ok();
+            }
+        }
+       
     }
 }

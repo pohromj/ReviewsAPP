@@ -27,8 +27,8 @@
         <div class="container">
             <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
 
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">ReviewWeb</a>
-
+                <a asp-area="" asp-controller="Project" asp-action="ShowProjects" class="navbar-brand">Review Web</a>
+                
                 @if (@HttpContextAccessor.HttpContext.Session.GetString("SecurityToken") == null)
                 {
                     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
@@ -44,11 +44,11 @@
                         <li class="nav-item"><a asp-area="" asp-controller="Review" asp-action="GetMyReviews" class="nav-link">My reviews</a></li>
 
                     </ul>
-                        <ul class="nav navbar-nav navbar-right">
-                            <li class="nav-item"><a asp-area="" asp-controller="Home" asp-action="Contact" class="nav-link">@HttpContextAccessor.HttpContext.Request.Cookies["Firstname"] @HttpContextAccessor.HttpContext.Request.Cookies["Lastname"]</a></li>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="nav-item"><a asp-area="" asp-controller="Home" asp-action="Contact" class="nav-link">@HttpContextAccessor.HttpContext.Request.Cookies["Firstname"] @HttpContextAccessor.HttpContext.Request.Cookies["Lastname"]</a></li>
 
-                            <li class="nav-item"><a asp-area="" asp-controller="Login" asp-action="Logout" class="nav-link">Log out</a></li>
-                        </ul>
+                        <li class="nav-item"><a asp-area="" asp-controller="Login" asp-action="Logout" class="nav-link">Log out</a></li>
+                    </ul>
                 }
 
             </div>
