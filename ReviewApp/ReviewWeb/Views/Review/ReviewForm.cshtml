@@ -3,7 +3,7 @@
     ViewData["Title"] = "ReviewForm";
 }
 
-<h2>ReviewForm</h2>
+<h2>Review Form</h2>
 <div class="row">
     <div class="col">
         <table class="table table-bordered">
@@ -100,9 +100,7 @@ else
                 destroy: true,
                 ordering: false,
                 dom: 'Bfrtip',
-                buttons: [
-                    'copy', 'csv', 'excel', 'pdf', 'print'
-                ]
+
             });
 
         $('#Reviews').on('change keyup keydown paste cut', 'textarea', function () {
@@ -142,7 +140,7 @@ else
                 console.log(data);
                 $.ajax({
                     type: 'POST',
-                    url: "http://localhost:49727/Review/CloseReview",
+                    url: "/Review/CloseReview",
                     dataType: 'json',
                     contentType: "application/json; charset=utf-8",
                     data: data,
@@ -262,7 +260,7 @@ else
         console.log(data);
         $.ajax({
             type: 'POST',
-            url: "http://localhost:49727/Review/SaveReviewProgress",
+            url: "/Review/SaveReviewProgress",
             dataType: 'json',
             contentType: "application/json; charset=utf-8",
             data: data,

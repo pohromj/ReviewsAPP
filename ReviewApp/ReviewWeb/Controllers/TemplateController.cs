@@ -9,12 +9,18 @@ using ReviewWeb.Models.ReviewTameplateModels;
 using Microsoft.AspNetCore.Http;
 using System.Text;
 using ReviewWeb.Models.ReviewModels;
+using Microsoft.Extensions.Configuration;
 
 namespace ReviewWeb.Controllers
 {
     [Route("Template")]
     public class TameplateController : Controller
     {
+        readonly string siteName;
+        public TameplateController(IConfiguration configuration)
+        {
+            this.siteName = configuration.GetValue<string>("Websetting:Url");
+        }
         [Route("TameplateCreator")]
         public IActionResult TameplateCreator()
         {
@@ -27,7 +33,7 @@ namespace ReviewWeb.Controllers
             {
                 string json = JsonConvert.SerializeObject(model);
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
-                HttpResponseMessage message = await client.PostAsync("http://localhost:55188/api/Tameplate/CreateTameplate", new StringContent(json, Encoding.UTF8, "application/json"));
+                HttpResponseMessage message = await client.PostAsync(siteName + "/api/Tameplate/CreateTameplate", new StringContent(json, Encoding.UTF8, "application/json"));
             }
 
             return RedirectToAction("Index", "Home");
@@ -38,7 +44,7 @@ namespace ReviewWeb.Controllers
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
-                HttpResponseMessage message = await client.GetAsync("http://localhost:55188/api/Tameplate/GetTameplate?id=" + id);
+                HttpResponseMessage message = await client.GetAsync(siteName + "/api/Tameplate/GetTameplate?id=" + id);
                 var tameplate = JsonConvert.DeserializeObject<ReviewTameplateForForm>(await message.Content.ReadAsStringAsync());
                 return tameplate;
             }
@@ -49,7 +55,7 @@ namespace ReviewWeb.Controllers
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
-                HttpResponseMessage msg = await client.GetAsync("http://localhost:55188/api/Tameplate/GetAllTameplates");
+                HttpResponseMessage msg = await client.GetAsync(siteName+"/api/Tameplate/GetAllTameplates");
                 List<ReviewTameplateForDropDown> templates = JsonConvert.DeserializeObject<List<ReviewTameplateForDropDown>>(await msg.Content.ReadAsStringAsync());
                 ViewBag.Templates = templates;
                 return View("~/Views/Tameplate/Templates.cshtml");
@@ -70,7 +76,7 @@ namespace ReviewWeb.Controllers
             {
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
                 string json = JsonConvert.SerializeObject(model);
-                HttpResponseMessage msg = await client.PutAsync("http://localhost:55188/api/Tameplate/UpdateTemplate", new StringContent(json, Encoding.UTF8, "application/json"));
+                HttpResponseMessage msg = await client.PutAsync(siteName+"/api/Tameplate/UpdateTemplate", new StringContent(json, Encoding.UTF8, "application/json"));
                 return Ok();
             }
         }
@@ -81,7 +87,7 @@ namespace ReviewWeb.Controllers
             {
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
                 
-                HttpResponseMessage msg = await client.DeleteAsync("http://localhost:55188/api/Tameplate/DeleteTemplate?id=" + id);
+                HttpResponseMessage msg = await client.DeleteAsync(siteName+"/api/Tameplate/DeleteTemplate?id=" + id);
                 return RedirectToAction("ShowAllTemplates", "Template");
             }
         }

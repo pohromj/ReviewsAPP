@@ -29,7 +29,7 @@ namespace ReviewApi.Controllers
         [HttpPost]
         public IActionResult Login([FromBody] LoginModel loginModel)
         {
-            var user = ValidateAndCreateUser(loginModel.Login, loginModel.Password);//context.Users.Where(u => u.Email == loginModel.Login && u.Password == loginModel.Password).FirstOrDefault();
+            var user = ValidateAndCreateUser(loginModel.Login, loginModel.Password);
 
             if (user != null)
             {

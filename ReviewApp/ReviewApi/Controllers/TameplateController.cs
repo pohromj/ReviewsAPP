@@ -51,8 +51,7 @@ namespace ReviewApi.Controllers
                     HeaderRow headerRow = new HeaderRow() { Function = row.Fcn, Parameter = row.Parameter, Name = row.Name };
                     column.HeaderRow.Add(headerRow);
                     tameplate.HeaderRow.Add(headerRow);
-                    //context.HeaderRow.Add(headerRow);
-                    //headerRow.ReviewColumn = column;
+                    
                 }
                 tameplate.ReviewColumn.Add(column);
                 if (m.Option != null)

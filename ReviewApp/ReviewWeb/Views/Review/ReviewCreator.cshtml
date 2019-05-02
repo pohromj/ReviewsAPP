@@ -6,7 +6,7 @@
 
 <h2>ReviewCreator</h2>
 
-<h4>ReviewViewModel</h4>
+
 <hr />
 <div id="accordion">
     <div class="card">
@@ -573,7 +573,7 @@
             //console.log(dta);
             $.ajax({
                 type: 'POST',
-                url: "http://localhost:49727/Review/CreateReview",
+                url: "/Review/CreateReview",
                 dataType: 'json',
                 contentType: "application/json; charset=utf-8",
                 data: data,

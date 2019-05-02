@@ -167,7 +167,7 @@
         $.ajax({
             type: 'GET',
             async: false,
-            url: "/Template/GetTemplate?id=" + id, // http://localhost:60000/api/upload/ -- na tuto URL se budou posilat diagramy (XML)
+            url: "/Template/GetTemplate?id=" + id, 
             dataType: 'json',
             contentType: "application/json; charset=utf-8",
             success: function (result) {
@@ -363,7 +363,7 @@
         console.log(data);
         $.ajax({
             type: 'PUT',
-            url: "http://localhost:49727/Template/UpdateTemplate", // http://localhost:60000/api/upload/ -- na tuto URL se budou posilat diagramy (XML)
+            url: "/Template/UpdateTemplate", // http://localhost:60000/api/upload/ -- na tuto URL se budou posilat diagramy (XML)
             dataType: 'json',
             contentType: "application/json; charset=utf-8",
             data: data,

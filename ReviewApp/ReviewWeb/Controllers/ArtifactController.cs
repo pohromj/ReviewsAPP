@@ -8,12 +8,18 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 
 namespace ReviewWeb.Controllers
 {
     [Route("Artifact")]
     public class ArtifactController : Controller
     {
+        readonly string siteName;
+        public ArtifactController(IConfiguration configuration)
+        {
+            this.siteName = configuration.GetValue<string>("Websetting:Url");
+        }
         [HttpGet("SpecificArtifacts")]
         public IActionResult SpecificArtifacts(int projectId, int workProductId)
         {
@@ -25,13 +31,13 @@ namespace ReviewWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> CheckIbmXml(/*[FromBody]*/ IbmUrlViewModel model)
         {
-            //List<string> xmlNodes = null;
+            
             using (HttpClient client = new HttpClient())
             {
                 string json = JsonConvert.SerializeObject(model);
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
-                HttpResponseMessage message = await client.PostAsync("http://localhost:55188/api/Artifact/GetArtifactsFormUrl", new StringContent(json, Encoding.UTF8, "application/json"));
-                //xmlNodes = JsonConvert.DeserializeObject<List<string>>(await message.Content.ReadAsStringAsync());
+                HttpResponseMessage message = await client.PostAsync(siteName + "/api/Artifact/GetArtifactsFormUrl", new StringContent(json, Encoding.UTF8, "application/json"));
+                
             }
             return RedirectToAction("GetWorkProductDetail", "Project", new { id = model.WorkProductId });
         }
@@ -40,9 +46,9 @@ namespace ReviewWeb.Controllers
         {
             using (HttpClient client = new HttpClient())
             {
-                HttpResponseMessage msg = await client.GetAsync("http://localhost:55188/api/Artifact/GetArtifactsPerPage?workProductId=" + workProductId + "&&page=" + page);
+                HttpResponseMessage msg = await client.GetAsync(siteName + "/api/Artifact/GetArtifactsPerPage?workProductId=" + workProductId + "&&page=" + page);
                 var artifacts = JsonConvert.DeserializeObject<List<JazzArtifact>>(await msg.Content.ReadAsStringAsync());
-                HttpResponseMessage msg2 = await client.GetAsync("http://localhost:55188/api/Artifact/NumberOfArtifactsInWorkProduct?workProductId=" + workProductId);
+                HttpResponseMessage msg2 = await client.GetAsync(siteName + "/api/Artifact/NumberOfArtifactsInWorkProduct?workProductId=" + workProductId);
                 int numberOfArtifact = JsonConvert.DeserializeObject<int>(await msg2.Content.ReadAsStringAsync());
                 ViewBag.NumberOfPage = numberOfArtifact / 15;
                 ViewBag.Artifacts = artifacts;
@@ -58,7 +64,7 @@ namespace ReviewWeb.Controllers
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
-                HttpResponseMessage msg2 = await client.GetAsync("http://localhost:55188/api/Artifact/GetArtifactDetailsHeadersForProject?projectId=" + projectId);
+                HttpResponseMessage msg2 = await client.GetAsync(siteName + "/api/Artifact/GetArtifactDetailsHeadersForProject?projectId=" + projectId);
                 var headers = JsonConvert.DeserializeObject<List<string>>(await msg2.Content.ReadAsStringAsync());
                 return headers;
             }
@@ -69,7 +75,7 @@ namespace ReviewWeb.Controllers
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
-                HttpResponseMessage msg2 = await client.GetAsync("http://localhost:55188/api/Artifact/GetAllArtifactForWorkProduct?id=" + projectId);
+                HttpResponseMessage msg2 = await client.GetAsync(siteName + "/api/Artifact/GetAllArtifactForWorkProduct?id=" + projectId);
                 var headers = JsonConvert.DeserializeObject<List<JazzArtifact>>(await msg2.Content.ReadAsStringAsync());
                 return headers;
             }

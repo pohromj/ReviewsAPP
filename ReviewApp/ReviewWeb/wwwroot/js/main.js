@@ -8,7 +8,7 @@ function postReviewTameplate(){
     console.log(data);
     $.ajax({
         type: 'POST',
-        url: "/Template/SaveTemplate", // http://localhost:60000/api/upload/ -- na tuto URL se budou posilat diagramy (XML)
+        url: "/Template/SaveTemplate",
         dataType: 'json',
         contentType: "application/json; charset=utf-8",
         data: data,
@@ -141,31 +141,19 @@ function addColumn() {
         tab.appendChild(th);
         var btn = document.getElementById('addColumnBtn');
         btn.value = "Add column";
-        /*if (isTextarea === true) {
-            var name = columnName.value;
-            var element = createColumnObjectForSavingToDatabase(name, 'textarea', null);
-            console.log(element);
-            formElements.push(element);
-        }
-        else {
-            //var name = columnName.value;
-            //var element = createColumnObjectForSavingToDatabase(name, 'select', optionValues);
-            //console.log(element);
-            //formElements.push(element);
-        }*/
+
         createRowTypeInTabel();
 
         columnName.value = "";
-        //optionValues = [];
-        //console.log(formElements);
+
     }
 
 }
 function createRowTypeInTabel() {
     var tableColumnsCount = document.getElementById('workSpaceTable').rows.length;
-    //console.log(tableColumnsCount);
+    
     if (tableColumnsCount === 1) {
-        //var text = document.createTextNode('text in td');
+        
         var text = getElementType();
 
         var table = document.getElementById('workSpaceTable');
@@ -176,11 +164,11 @@ function createRowTypeInTabel() {
         row.appendChild(td);
         table.appendChild(row);
 
-        //removeElement();
+        
     }
     else {
         var table = document.getElementById('workSpaceTable').rows[1];
-        //var text = document.createTextNode('text in td');
+        
         var text = getElementType();
         var td = document.createElement('td');
         td.appendChild(text);
@@ -200,7 +188,7 @@ function getElementType() {
             options.value = optionValue[i];
             options.text = optionValue[i];
             select.appendChild(options);
-            //optionValues.push(optionValue[i]);
+            
         }
         removeElement();
 
@@ -295,7 +283,7 @@ function updateReviewForm() {
 function removeColumnFromTable(index) {
     var table = document.getElementById('workSpaceTable');
     index = index.parentNode.cellIndex;
-    //formElements.slice(index, index);//remove element from specific index in array
+    
     console.log(index);
     for (var i = 0; i < table.rows.length; i++) {
         table.rows[i].deleteCell(index);
@@ -463,11 +451,10 @@ function appendToHeaderTable() {
     else {
         var specificColumnValue = document.getElementById('specificColumn').value;
         var specificColumnEnumValue = document.getElementById('columnEnums').value;
-        //var txt = document.createTextNode('sum for column: ' + specificColumnValue + ' option: ' + specificColumnEnumValue);
-        //td1.appendChild(txt);
+        
         td1.innerHTML = "<span id=\"fnc\">sum</span> for column: <span id=\"columnName\">"+specificColumnValue+"</span> option: <span id=\"opt\">"+specificColumnEnumValue+"</span>";
         console.log(specificColumnValue);
-        //createHeaderElement(atributName, 'sum', specificColumnEnumValue, specificColumnValue);
+        
         removeColumns();
     }
     tr.appendChild(td);
@@ -500,10 +487,7 @@ function getAllCustomRows(){
             var tmp = table.rows[i].cells[1].getElementsByTagName('span');
             console.log("test fnc");
             console.log(tmp);
-            /*
-            var fnc = document.getElementById('fnc').innerText;
-            var parameter = document.getElementById('opt').innerText;
-            var column = document.getElementById('columnName').innerText;*/
+            
             var fnc = tmp.fnc.innerText;
             var parameter = tmp.opt.innerText;
             var column = tmp.columnName.innerText;

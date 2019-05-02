@@ -36,7 +36,7 @@ namespace ReviewApi.Controllers
             u.Lastname = registrationModel.Lastname;
             u.Password = hashedPassword;
             u.Salt = slt;
-            u.SystemRoleId = context.SystemRole.FirstOrDefault().Id; //2; //zmenit potom na nacteni z databaze dane role
+            u.SystemRoleId = context.SystemRole.FirstOrDefault().Id;
             context.Users.Add(u);
             context.SaveChanges();
             return Ok();
@@ -45,13 +45,12 @@ namespace ReviewApi.Controllers
         [Route("GetAllUsers")]
         public IEnumerable<UserModel> GetAllUsers()
         {
-            //var identity = HttpContext.User.Identity as ClaimsIdentity;
+            
             List<UserModel> usersModel = new List<UserModel>();
-            /*if (identity != null)
-            {
+            
                
-                string email = identity.FindFirst("UserEmail").Value;*/
-            var users = context.Users; //context.Users.Where(u => u.Email != email).ToArray();
+                
+            var users = context.Users; 
             foreach (Users u in users)
             {
                 usersModel.Add(new UserModel() { Firstname = u.Firstname, Email = u.Email, Lastname = u.Lastname });

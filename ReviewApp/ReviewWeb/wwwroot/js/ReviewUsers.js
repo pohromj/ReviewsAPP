@@ -27,22 +27,10 @@ function AppendToParticipantsTable(index) {
         btn.setAttribute('class', 'btn btn-primary btn-sm');
         cell.appendChild(btn);
         table.appendChild(row);
-    /*}
-    else {
-        var cell = row.insertCell(3);
-        var btn = createButton('AppendToAllUsers(this)', 'Remove');
-        btn.setAttribute('class', 'btn btn-primary btn-sm');
-        cell.appendChild(btn);
-        table.appendChild(row);
 
-    }*/
 
     console.log(btn);
-    //cell.appendChild(btn);
-    //table.appendChild(row);
-    //var allUserTable = document.getElementById("allUsers").getElementsByTagName('tbody');
-    // - 1;
-    //console.log(allUserTable);
+    
     console.log("cell: " + indx);
     console.log("row: " + i);
 
@@ -112,17 +100,17 @@ function saveChanges(id) {
     console.log(data);
     $.ajax({
         type: 'POST',
-        url: "http://localhost:49727/User/ChangeParticipants", // http://localhost:60000/api/upload/ -- na tuto URL se budou posilat diagramy (XML)
+        url: "/User/ChangeParticipants", 
         dataType: 'json',
         contentType: "application/json; charset=utf-8",
         data: data,
         success: function (result) {
             if (result !== null) {
-                // document.getElementById("result").innerHTML = JSON.stringify(result);
+                
                 alert(result.result);
             } else {
-                //document.getElementById("result").innerHTML = "NULL";
-                alert("KO");
+                
+                
 
             }
         }

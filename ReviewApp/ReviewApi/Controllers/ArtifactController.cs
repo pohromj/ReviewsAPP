@@ -34,8 +34,7 @@ namespace ReviewApi.Controllers
                 String encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(username + ":" + password));
                 client.Headers.Add("Authorization", "Basic " + encoded);
                 xml = client.DownloadString(model.Url);
-                //XmlParser.ParseXml(xml);
-                //nodesInXml = XmlParser.NodesInXml(xml);
+                
                 nodesInXml = XmlParser.CreateJazzObjects(xml);
                 SaveArtifactToDatabase(nodesInXml, model);
             }
@@ -48,7 +47,7 @@ namespace ReviewApi.Controllers
             {
                 IbmArtifact artifact = new IbmArtifact() { IbmId = a.IbmId, Name = a.Name, Url = a.Url, WorkproductId = model.WorkProductId };
                 context.Workproduct.Where(w => w.Id == model.WorkProductId).FirstOrDefault().IbmArtifact.Add(artifact);
-                //context.IbmArtifact.Add(artifact);
+                
             }
             context.SaveChanges();
         }
@@ -76,7 +75,7 @@ namespace ReviewApi.Controllers
         {
             int artifactPerPage = 15;
             int totalArtifacts = context.IbmArtifact.Count(a => a.WorkproductId == workProductId);
-            //int totalArtifacts = context.IbmArtifact.Where(a => a.WorkproductId == workProductId).Count();
+            
             int amoutOfPages = totalArtifacts / artifactPerPage;
             if (totalArtifacts % artifactPerPage > 0)
                 amoutOfPages++;
@@ -101,7 +100,7 @@ namespace ReviewApi.Controllers
         public int CountOfAllArtifactsInWorkProduct(int workProductId)
         {
             
-            int artifactCount = context.IbmArtifact.Count(a => a.WorkproductId == workProductId);//context.IbmArtifact.Where(a => a.Id == workProductId).Count();
+            int artifactCount = context.IbmArtifact.Count(a => a.WorkproductId == workProductId);
             return artifactCount;
         }
         /*

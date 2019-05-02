@@ -13,8 +13,7 @@ function createSelectForColumnData(id) {
     if (typeof Formdata !== 'undefined') {
         var headers = getArtifactHeaders(id);
 
-        /*if (typeof headers !== 'undefined') {
-            console.log('headers pass');*/
+        
 
             for (var i = 0; i < Formdata.columns.length; i++) {
                 if (Formdata.columns[i].type === 'textarea') {
@@ -198,7 +197,7 @@ function getTameplate(id) {
     $.ajax({
         type: 'GET',
         async: false,
-        url: "/Template/GetTemplate?id=" + id, // http://localhost:60000/api/upload/ -- na tuto URL se budou posilat diagramy (XML)
+        url: "/Template/GetTemplate?id=" + id, 
         dataType: 'json',
         contentType: "application/json; charset=utf-8",
 

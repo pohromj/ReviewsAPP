@@ -12,12 +12,18 @@ using ReviewWeb.Models.UserModels;
 using Microsoft.AspNetCore.Http;
 using System.Text;
 using ReviewWeb.Models.Artifact;
+using Microsoft.Extensions.Configuration;
 
 namespace ReviewWeb.Controllers
 {
     [Route("Review")]
     public class ReviewController : Controller
     {
+        readonly string siteName;
+        public ReviewController(IConfiguration configuration)
+        {
+            this.siteName = configuration.GetValue<string>("Websetting:Url");
+        }
         [HttpGet("projectID")]
         public async Task<IActionResult> ReviewCreator(int projectID, int? workproductId)
         {
@@ -26,7 +32,7 @@ namespace ReviewWeb.Controllers
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
-                HttpResponseMessage msg = await client.GetAsync("http://localhost:55188/api/Tameplate/GetAllTameplates");
+                HttpResponseMessage msg = await client.GetAsync(siteName + "/api/Tameplate/GetAllTameplates");
                 var tameplates = JsonConvert.DeserializeObject<List<ReviewTameplateForDropDown>>(await msg.Content.ReadAsStringAsync());
                 listItemsTameplates.Add(new SelectListItem() { Text = "", Value = "" });
                 foreach (var p in tameplates)
@@ -34,7 +40,7 @@ namespace ReviewWeb.Controllers
                     listItemsTameplates.Add(new SelectListItem() { Text = p.Name, Value = p.ID.ToString() });
                 }
                 ViewBag.AllTameplates = listItemsTameplates;
-                msg = await client.GetAsync("http://localhost:55188/api/Project/GetAllWorkProductsForProject?id=" + projectID);
+                msg = await client.GetAsync(siteName+"/api/Project/GetAllWorkProductsForProject?id=" + projectID);
                 var workProducts = JsonConvert.DeserializeObject<List<WorkProductViewModel>>(await msg.Content.ReadAsStringAsync());
                 foreach (var k in workProducts)
                 {
@@ -44,17 +50,17 @@ namespace ReviewWeb.Controllers
                         listItemsWorkProducts.Add(new SelectListItem() { Text = k.Name, Value = k.Id.ToString()});
                 }
                 ViewBag.WorkProducts = listItemsWorkProducts;
-                HttpResponseMessage message = await client.GetAsync("http://localhost:55188/api/User/GetAllUsers");
+                HttpResponseMessage message = await client.GetAsync(siteName + "/api/User/GetAllUsers");
 
                 var users = JsonConvert.DeserializeObject<List<UserDetail>>(await message.Content.ReadAsStringAsync());
                 if (users.Count > 0 && users != null)
                 {
-                    HttpResponseMessage msgP = await client.GetAsync("http://localhost:55188/api/Project/GetAllParticipantsOnProject?id=" + projectID);
+                    HttpResponseMessage msgP = await client.GetAsync(siteName + "/api/Project/GetAllParticipantsOnProject?id=" + projectID);
                     var projectParticipants = JsonConvert.DeserializeObject<List<string>>(await msgP.Content.ReadAsStringAsync());
                     List<UserDetail> participants = new List<UserDetail>(users);
                     participants.RemoveAll(p => !projectParticipants.Contains(p.Email));
                     users.RemoveAll(u => projectParticipants.Contains(u.Email));
-                    HttpResponseMessage msg2 = await client.GetAsync("http://localhost:55188/api/Project/ProjectDetail?id=" + projectID);
+                    HttpResponseMessage msg2 = await client.GetAsync(siteName + "/api/Project/ProjectDetail?id=" + projectID);
                     var project = JsonConvert.DeserializeObject<ProjectDetailViewModel>(await msg2.Content.ReadAsStringAsync());
                     ViewBag.Project = project;
                     ViewBag.Users = users;
@@ -76,7 +82,7 @@ namespace ReviewWeb.Controllers
             {
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
                 string json = JsonConvert.SerializeObject(setup);
-                HttpResponseMessage message = await client.PostAsync("http://localhost:55188/api/Review/CreateReview", new StringContent(json, Encoding.UTF8, "application/json"));
+                HttpResponseMessage message = await client.PostAsync(siteName + "/api/Review/CreateReview", new StringContent(json, Encoding.UTF8, "application/json"));
                 int reviewId = JsonConvert.DeserializeObject<int>(await message.Content.ReadAsStringAsync());
                 //return RedirectToAction("GetReview", "Review", new { id = reviewId });
                 return reviewId;
@@ -89,7 +95,7 @@ namespace ReviewWeb.Controllers
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
-                HttpResponseMessage msg2 = await client.GetAsync("http://localhost:55188/api/Review/GetReview?id=" + id);
+                HttpResponseMessage msg2 = await client.GetAsync(siteName + "/api/Review/GetReview?id=" + id);
                 FullReview review = JsonConvert.DeserializeObject<FullReview>(await msg2.Content.ReadAsStringAsync());
                 ViewBag.ReviewId = id;
                 ViewBag.ReviewSetup = review;
@@ -103,7 +109,7 @@ namespace ReviewWeb.Controllers
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
-                HttpResponseMessage msg2 = await client.GetAsync("http://localhost:55188/api/Review/GetMyReviews");
+                HttpResponseMessage msg2 = await client.GetAsync(siteName + "/api/Review/GetMyReviews");
                 List<ReviewSetup> review = JsonConvert.DeserializeObject<List<ReviewSetup>>(await msg2.Content.ReadAsStringAsync());
                 ViewBag.ReviewSetup = review;
                 return View("~/Views/Review/MyReviews.cshtml");
@@ -116,9 +122,8 @@ namespace ReviewWeb.Controllers
             {
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
                 string json = JsonConvert.SerializeObject(progress);
-                HttpResponseMessage message = await client.PostAsync("http://localhost:55188/api/Review/SaveReviewProgress", new StringContent(json, Encoding.UTF8, "application/json"));
-                //int reviewId = JsonConvert.DeserializeObject<int>(await message.Content.ReadAsStringAsync());
-                //return RedirectToAction("GetReview", "Review", new { id = reviewId });
+                HttpResponseMessage message = await client.PostAsync(siteName + "/api/Review/SaveReviewProgress", new StringContent(json, Encoding.UTF8, "application/json"));
+                
                 return Ok();
             }
         }
@@ -130,7 +135,7 @@ namespace ReviewWeb.Controllers
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
-                HttpResponseMessage msg2 = await client.GetAsync("http://localhost:55188/api/Review/GetReviewsForArtifact?id=" + id);
+                HttpResponseMessage msg2 = await client.GetAsync(siteName + "/api/Review/GetReviewsForArtifact?id=" + id);
                 var artifact = JsonConvert.DeserializeObject<ReviewsForArtifact>(await msg2.Content.ReadAsStringAsync());
                 ViewBag.Artifact = artifact;
                 return View("~/Views/Review/ReviewsForArtifact.cshtml");
@@ -143,7 +148,7 @@ namespace ReviewWeb.Controllers
             {
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
                 string json = JsonConvert.SerializeObject(progress);
-                HttpResponseMessage message = await client.PostAsync("http://localhost:55188/api/Review/CloseReview", new StringContent(json, Encoding.UTF8, "application/json"));
+                HttpResponseMessage message = await client.PostAsync(siteName+"/api/Review/CloseReview", new StringContent(json, Encoding.UTF8, "application/json"));
                 return Ok();
             }
         }
@@ -154,7 +159,7 @@ namespace ReviewWeb.Controllers
             {
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
                 
-                HttpResponseMessage message = await client.DeleteAsync("http://localhost:55188/api/Review/DeleteReview?id=" + id);
+                HttpResponseMessage message = await client.DeleteAsync(siteName + "/api/Review/DeleteReview?id=" + id);
                 return RedirectToAction("ShowProjects", "Project");
             }
         }

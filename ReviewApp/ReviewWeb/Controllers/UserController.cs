@@ -9,21 +9,29 @@ using System.Text;
 using ReviewWeb.Models.UserModels;
 using Microsoft.AspNetCore.Http;
 using ReviewWeb.Models.ProjectModels;
+using Microsoft.Extensions.Configuration;
 
 namespace ReviewWeb.Controllers
 {
     [Route("User")]
     public class UserController : Controller
     {
+        readonly string siteName;
+        
+        public UserController(IConfiguration configuration)
+        {
+            this.siteName = configuration.GetValue<string>("Websetting:Url");
+        }
         public IActionResult RegistrationPage()
         {
+            
             return View("~/Views/Login/Registration.cshtml");
         }
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (!ValidateData(model))
-                return View("Registration");
+                return View("~/Views/Login/Registration.cshtml");
 
             using (HttpClient client = new HttpClient())
             {
@@ -34,14 +42,8 @@ namespace ReviewWeb.Controllers
                     Firstname = model.Firstname,
                     Lastname = model.Lastname
                 });
-                HttpResponseMessage message = await client.PostAsync("http://localhost:55188/api/User/Registration", new StringContent(json, Encoding.UTF8, "application/json"));
-                //LoginViewModel login = new LoginViewModel();
-                //login.Login = model.Email;
-                //login.Password = model.Password;
-                //LoginController controller = new LoginController();
-
-                //var c = HttpContext.RequestServices.GetService(typeof(LoginController));
-                //return await lgn.Login(login);
+                HttpResponseMessage message = await client.PostAsync(siteName +"/api/User/Registration", new StringContent(json, Encoding.UTF8, "application/json"));
+                
                 ViewBag.LoginEmail = model.Email;
                 return View("~/Views/Login/Login.cshtml");
             }
@@ -90,17 +92,17 @@ namespace ReviewWeb.Controllers
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
-                HttpResponseMessage message = await client.GetAsync("http://localhost:55188/api/User/GetAllUsers");
+                HttpResponseMessage message = await client.GetAsync(siteName + "/api/User/GetAllUsers");
 
                 var users = JsonConvert.DeserializeObject<List<UserDetail>>(await message.Content.ReadAsStringAsync());
                 if (users.Count > 0 && users != null)
                 {
-                    HttpResponseMessage msg = await client.GetAsync("http://localhost:55188/api/Project/GetAllParticipantsOnProject?id=" + projectId);
+                    HttpResponseMessage msg = await client.GetAsync(siteName + "/api/Project/GetAllParticipantsOnProject?id=" + projectId);
                     var projectParticipants = JsonConvert.DeserializeObject<List<string>>(await msg.Content.ReadAsStringAsync());
                     List<UserDetail> participants = new List<UserDetail>(users);
                     participants.RemoveAll(p => !projectParticipants.Contains(p.Email));
                     users.RemoveAll(u => projectParticipants.Contains(u.Email));
-                    HttpResponseMessage msg2 = await client.GetAsync("http://localhost:55188/api/Project/ProjectDetail?id=" + projectId);
+                    HttpResponseMessage msg2 = await client.GetAsync(siteName+"/api/Project/ProjectDetail?id=" + projectId);
                     var project = JsonConvert.DeserializeObject<ProjectDetailViewModel>(await msg2.Content.ReadAsStringAsync());
                     ViewBag.Project = project;
                     ViewBag.Users = users;
@@ -124,9 +126,9 @@ namespace ReviewWeb.Controllers
             {
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("SecurityToken"));
                 string json = JsonConvert.SerializeObject(participants);
-                HttpResponseMessage message = await client.PostAsync("http://localhost:55188/api/Project/ChangeParticipants", new StringContent(json, Encoding.UTF8, "application/json"));
+                HttpResponseMessage message = await client.PostAsync(siteName+"/api/Project/ChangeParticipants", new StringContent(json, Encoding.UTF8, "application/json"));
             }
-            return Ok();//RedirectToAction("ProjectDetail", "Project", new { projectId = participants.ProjectId });
+            return Ok();
         }
     }
 }

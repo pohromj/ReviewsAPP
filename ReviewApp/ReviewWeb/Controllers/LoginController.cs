@@ -9,11 +9,17 @@ using Newtonsoft.Json;
 
 using Microsoft.AspNetCore.Http;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 
 namespace ReviewWeb.Controllers
 {
     public class LoginController : Controller
     {
+        readonly string siteName;
+        public LoginController(IConfiguration configuration)
+        {
+            this.siteName = configuration.GetValue<string>("Websetting:Url");
+        }
         public IActionResult LoginPage()
         {
             if (HttpContext.Session.Keys.Count() > 0)
@@ -24,15 +30,14 @@ namespace ReviewWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel loginModel)
         {
-            //CookieOptions cookieOptions = new CookieOptions();
-            //cookieOptions.
+            
             if (HttpContext.Session.Keys.Count() > 0)
                 return RedirectToAction("Index", "Home");
             using (HttpClient client = new HttpClient())
             {
-                //var json = Json(loginModel);
+                
                 string json = JsonConvert.SerializeObject(loginModel);
-                HttpResponseMessage message = await client.PostAsync("http://localhost:55188/api/Auth/login", new StringContent(json, Encoding.UTF8, "application/json"));
+                HttpResponseMessage message = await client.PostAsync(siteName + "/api/Auth/login", new StringContent(json, Encoding.UTF8, "application/json"));
                 if (message.StatusCode != System.Net.HttpStatusCode.Unauthorized)
                 {
                     string s = await message.Content.ReadAsStringAsync();
@@ -51,12 +56,12 @@ namespace ReviewWeb.Controllers
                 }
             }
             return RedirectToAction("ShowProjects", "Project");
-            //return RedirectToAction("Index", "Home");
+            
         }
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
-            return View("~/Views/Login/Login.cshtml");//RedirectToAction("Login", "LoginPage");
+            return View("~/Views/Login/Login.cshtml");
         }
     }
 }

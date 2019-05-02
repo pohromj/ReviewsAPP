@@ -117,7 +117,7 @@ Participants on project
         console.log(data);
         $.ajax({
             type: 'POST',
-            url: "http://localhost:49727/User/ChangeParticipants", // http://localhost:60000/api/upload/ -- na tuto URL se budou posilat diagramy (XML)
+            url: "/User/ChangeParticipants", 
             dataType: 'json',
             contentType: "application/json; charset=utf-8",
             data: data,
