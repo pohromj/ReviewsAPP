@@ -27,10 +27,12 @@
         <div class="container">
             <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
 
-                <a asp-area="" asp-controller="Project" asp-action="ShowProjects" class="navbar-brand">Review Web</a>
-                
+
+
                 @if (@HttpContextAccessor.HttpContext.Session.GetString("SecurityToken") == null)
                 {
+                    <a asp-area="" asp-controller="Login" asp-action="LoginPage" class="navbar-brand">Review Web</a>
+
                     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                         <li class="nav-item"><a asp-area="" asp-controller="Login" asp-action="LoginPage" class="nav-link">Login</a></li>
                         <li class="nav-item"><a asp-area="" asp-controller="User" asp-action="RegistrationPage" class="nav-link">Registration</a></li>
@@ -38,6 +40,7 @@
                 }
                 else
                 {
+                    <a asp-area="" asp-controller="Project" asp-action="ShowProjects" class="navbar-brand">Review Web</a>
                     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                         <li class="nav-item"><a asp-area="" asp-controller="Tameplate" asp-action="ShowAllTemplates" class="nav-link">Templates</a></li>
                         <li class="nav-item"><a asp-area="" asp-controller="Project" asp-action="ShowProjects" class="nav-link">Projects</a></li>
